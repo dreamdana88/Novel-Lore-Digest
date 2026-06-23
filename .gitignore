@@ -1,0 +1,40 @@
+# User source files and generated analysis artifacts
+source_raw/*
+!source_raw/.gitkeep
+
+source/*
+!source/.gitkeep
+
+notes/story-notes/*
+!notes/story-notes/.gitkeep
+notes/chapter-notes/*
+!notes/chapter-notes/.gitkeep
+notes/arc-notes/*
+!notes/arc-notes/.gitkeep
+
+outputs/*
+!outputs/.gitkeep
+!outputs/SillyTavern角色卡/
+outputs/SillyTavern角色卡/*
+!outputs/SillyTavern角色卡/.gitkeep
+
+exports/*
+!exports/.gitkeep
+
+# Generated indexes
+index/*
+!index/.gitkeep
+
+# Common ebook and document source formats
+*.epub
+*.pdf
+*.mobi
+*.azw3
+
+# Python and OS/editor artifacts
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
