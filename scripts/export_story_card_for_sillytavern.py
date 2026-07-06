@@ -140,6 +140,15 @@ def content_without_header(inner: str) -> str:
     return "\n".join(lines).strip()
 
 
+def export_content_with_xml_tag(block: XmlBlock) -> str:
+    content = content_after_label(block.inner_text)
+    if not content:
+        content = content_without_header(block.inner_text)
+    if not content:
+        return ""
+    return f"<{block.tag}>\n{content}\n</{block.tag}>"
+
+
 def parse_order(raw: str) -> int:
     match = re.search(r"-?\d+", raw)
     return int(match.group(0)) if match else 100
@@ -159,9 +168,7 @@ def block_to_entry(block: XmlBlock, entry_id: int) -> EntryResult:
     order_raw = line_value(block.inner_text, "插入顺序")
     strategy = line_value(block.inner_text, "激活策略")
 
-    content = content_after_label(block.inner_text)
-    if not content:
-        content = content_without_header(block.inner_text)
+    content = export_content_with_xml_tag(block)
 
     for field in REQUIRED_HEADER_FIELDS:
         if not line_value(block.inner_text, field):
@@ -273,6 +280,7 @@ def write_report(
         "- `data.name`：作品名",
         "- `description/personality/scenario/first_mes/mes_example`：按工作流要求保持空字符串",
         "- 所有可用内容仅写入 `data.character_book.entries`",
+        "- 条目 `content` 保留外层 XML 标签（如 `<world_*>`、`<Character_*>`、`<NPC_*>`），管理头字段不写入正文",
         "",
         "## 警告",
     ]

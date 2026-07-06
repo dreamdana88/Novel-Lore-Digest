@@ -9,6 +9,7 @@
 - `data.description`、`data.personality`、`data.scenario`、`data.first_mes`、`data.mes_example` 必须保持空字符串。
 - 不写开场白、不写主持人规则、不写玩法引导、不写示例互动。
 - 所有可用设定都进入 `data.character_book.entries`。
+- 每个 entry 的 `content` 必须保留原始外层 XML 标签，如 `<world_*>...</world_*>`、`<Character_*>...</Character_*>`、`<NPC_*>...</NPC_*>`；只去掉条目名称、关键词、插入位置、插入顺序、激活策略等管理头字段。
 
 ## 输入
 
@@ -76,6 +77,7 @@ JSON 必须采用 Character Card V2 结构：
 - 是否仍有 `【需自行补充】`、`【待核查】`、`【待回填语料】`。
 - 是否有缺少关键词、插入位置、插入顺序、激活策略或内容为空的条目。
 - 角色卡壳字段是否保持为空。
+- 抽查世界书、主角、NPC 条目的 `content` 是否仍以 XML 开标签开始、以对应闭标签结束。
 
 ## 禁止
 

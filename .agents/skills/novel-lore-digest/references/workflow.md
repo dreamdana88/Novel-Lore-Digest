@@ -48,6 +48,7 @@
    - 最终 JSON 是一张以作品名命名的 SillyTavern 作品角色卡，如 `琅琊榜.json`。
    - 角色卡本体只作容器：`description`、`personality`、`scenario`、`first_mes`、`mes_example` 等字段保持空字符串。
    - 所有世界、势力、地点、剧情、时间线、关系和角色汇总内容全部写入 `data.character_book.entries`。
+   - 每个 entry 的 `content` 必须保留原始外层 XML 标签（如 `<world_*>...</world_*>`、`<Character_*>...</Character_*>`、`<NPC_*>...</NPC_*>`），但不写入条目名称、关键词、插入位置、插入顺序、激活策略等管理头字段。
    - 不生成多张单角色 JSON，不写开场白、主持人规则、玩法说明或示例互动。
 
 ## 星辰工坊规范依据
