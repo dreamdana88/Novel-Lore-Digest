@@ -33,8 +33,8 @@ python scripts/export_story_card_for_sillytavern.py
 
 生成：
 
-- `exports/sillytavern-story-card/{作品名}.json`
-- `exports/sillytavern-story-card/导出检查报告.md`
+- `outputs/sillytavern-story-card/{作品名}.json`
+- `outputs/sillytavern-story-card/导出检查报告.md`
 
 JSON 必须采用 Character Card V2 结构：
 

@@ -51,6 +51,6 @@
 - “导出世界书导入块”
 - “准备星辰工坊导入”
 
-你必须读取 prompts/同步到酒馆.md。默认优先运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `exports/sillytavern-story-card/{作品名}.json`；只有用户明确要求“导出世界书导入块”或“准备星辰工坊导入”时，才运行 `python scripts/export_worldbook_for_starforge.py`。不要直接修改 SillyTavern 存档或世界书数据库。
+你必须读取 prompts/同步到酒馆.md。默认优先运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `outputs/sillytavern-story-card/{作品名}.json`；只有用户明确要求“导出世界书导入块”或“准备星辰工坊导入”时，才运行 `python scripts/export_worldbook_for_starforge.py`。不要直接修改 SillyTavern 存档或世界书数据库。
 
 

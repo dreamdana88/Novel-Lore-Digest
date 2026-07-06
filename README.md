@@ -85,7 +85,7 @@ python scripts/next_step.py
 默认最终产物是一张“作品大世界卡”，例如：
 
 ```txt
-exports/sillytavern-story-card/{作品名}.json
+outputs/sillytavern-story-card/{作品名}.json
 ```
 
 这张卡只把 `data.name` 写成作品名；`description`、`personality`、`scenario`、`first_mes`、`mes_example` 等角色定义字段保持为空。所有世界书与角色汇总内容都写入 `data.character_book.entries`，导入 SillyTavern 后作为一本内嵌世界书使用。
@@ -99,7 +99,7 @@ python scripts/export_story_card_for_sillytavern.py
 检查报告：
 
 ```txt
-exports/sillytavern-story-card/导出检查报告.md
+outputs/sillytavern-story-card/导出检查报告.md
 ```
 
 ## 世界书快捷导入（旧路径）

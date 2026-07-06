@@ -75,5 +75,5 @@ If the user says “回填台词” / “回填语料”, read `prompts/回填�
 If the user says “同步到酒馆”, “导出世界书导入块”, or “准备星辰工坊导入”:
 1. Read `prompts/同步到酒馆.md`.
 2. Default to `python scripts/export_story_card_for_sillytavern.py` for a one-card SillyTavern import unless the user explicitly asks for the legacy StarForge worldbook block.
-3. Use `exports/sillytavern-story-card/{作品名}.json` as the final SillyTavern import artifact.
+3. Use `outputs/sillytavern-story-card/{作品名}.json` as the final SillyTavern import artifact.
 4. Do not directly modify SillyTavern storage files.

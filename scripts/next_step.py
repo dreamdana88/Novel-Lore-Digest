@@ -11,7 +11,6 @@ INDEX = ROOT / "index"
 NOTES = ROOT / "notes"
 ENTITIES = ROOT / "entities"
 OUTPUTS = ROOT / "outputs"
-EXPORTS = ROOT / "exports"
 NEXT_STEP = INDEX / "下一步.md"
 
 REQUIRED_CONFIG_LABELS = [
@@ -141,7 +140,7 @@ def decide() -> tuple[str, str, list[str]]:
         f"outputs/SillyTavern世界书.md：{'已有内容' if meaningful(OUTPUTS / 'SillyTavern世界书.md') else '未生成'}",
         f"outputs/SillyTavern角色汇总/：{'已有角色文件' if has_files(OUTPUTS / 'SillyTavern角色汇总', {'.md'}) else '未生成角色文件'}",
         f"outputs/SillyTavern角色汇总.md：{'已有核查汇总' if meaningful(OUTPUTS / 'SillyTavern角色汇总.md') else '未汇总'}",
-        f"exports/sillytavern-story-card/：{'已有作品角色卡 JSON' if has_files(EXPORTS / 'sillytavern-story-card', {'.json'}) else '未导出'}",
+        f"outputs/sillytavern-story-card/：{'已有作品角色卡 JSON' if has_files(OUTPUTS / 'sillytavern-story-card', {'.json'}) else '未导出'}",
     ]
 
     if missing:
@@ -166,7 +165,7 @@ def decide() -> tuple[str, str, list[str]]:
         return "输出 SillyTavern 角色汇总", "输出 SillyTavern 角色汇总。", status
     if not meaningful(OUTPUTS / "SillyTavern角色汇总.md"):
         return "归并角色汇总用于核查", "归并角色卡。", status
-    if not has_files(EXPORTS / "sillytavern-story-card", {".json"}):
+    if not has_files(OUTPUTS / "sillytavern-story-card", {".json"}):
         return "导出 SillyTavern 作品角色卡 JSON", "同步到酒馆。", status
     return "生成待核查清单或复查最终导出", "继续下一步。", status
 

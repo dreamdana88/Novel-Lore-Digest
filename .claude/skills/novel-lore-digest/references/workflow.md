@@ -45,7 +45,7 @@
     - 每个角色文件含世界书条目头（条目名称/关键词/插入位置/插入顺序/激活策略），语料优先用原文台词，缺口标【待回填语料】。
     - 小说不写的纯设定字段（生日/体香/贞操/about_user/charm_reframing/safety_valve）保留【需自行补充】，不编造；来源放卡末「来源附录」。
 11. 使用 `prompts/10_归并角色卡.md` 或运行 `python scripts/merge_character_cards.py`，把角色汇总整理为核查用中间文件 `outputs/SillyTavern角色汇总.md`（主角在前）。该汇总文件只是复查和第 12 步输入之一，不是最终导入物。
-12. 使用 `prompts/11_导出SillyTavern作品角色卡.md` 或运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `exports/sillytavern-story-card/{作品名}.json`。
+12. 使用 `prompts/11_导出SillyTavern作品角色卡.md` 或运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `outputs/sillytavern-story-card/{作品名}.json`。
     - 最终 JSON 是一张以作品名命名的 SillyTavern 作品角色卡。
     - 角色卡本体只作容器：`description`、`personality`、`scenario`、`first_mes`、`mes_example` 等字段保持空字符串。
     - 所有世界、势力、地点、剧情、时间线、关系和角色汇总内容全部写入 `data.character_book.entries`。

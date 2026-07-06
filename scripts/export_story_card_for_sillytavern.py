@@ -15,7 +15,7 @@ CHARACTER_SUMMARY_CANDIDATES = [
 CHARACTER_DIR_CANDIDATES = [
     ROOT / "outputs" / "SillyTavern角色汇总",
 ]
-EXPORT_DIR = ROOT / "exports" / "sillytavern-story-card"
+EXPORT_DIR = ROOT / "outputs" / "sillytavern-story-card"
 REPORT = EXPORT_DIR / "导出检查报告.md"
 
 REQUIRED_HEADER_FIELDS = ["条目名称", "关键词", "插入位置", "插入顺序", "激活策略"]
