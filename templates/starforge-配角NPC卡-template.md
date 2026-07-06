@@ -1,7 +1,7 @@
 # 星辰工坊 · 配角 NPC 卡模板（NPC_Blueprint）
 
 用于 PROJECT_CONFIG.md 中「只需简要记录的角色」。
-由 `entities/characters.md` 或局部笔记的配角信息转写而来，输出到 `outputs/SillyTavern角色卡/`。
+由 `entities/characters.md` 或局部笔记的配角信息转写而来，输出到 `outputs/SillyTavern角色汇总/`。
 依据（项目内存档）：`references/星辰工坊规范/捏人-配角NPC规范.txt`、`references/星辰工坊规范/什么是世界书.yaml`。
 
 ## 填写规则

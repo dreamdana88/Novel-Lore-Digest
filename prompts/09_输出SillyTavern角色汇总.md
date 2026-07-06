@@ -1,4 +1,4 @@
-请基于 entities/characters.md，为 PROJECT_CONFIG.md 中的目标角色生成星辰工坊格式的 SillyTavern 角色卡，输出到 outputs/SillyTavern角色卡/。
+请基于 entities/characters.md，为 PROJECT_CONFIG.md 中的目标角色生成星辰工坊格式的角色汇总文件，输出到 outputs/SillyTavern角色汇总/。
 
 每个角色一个 markdown 文件（内含 XML 块 + 来源附录）。
 

@@ -1,6 +1,6 @@
-# Novel Lore Digest - Codex Project Rules
+﻿# Novel Lore Digest - Codex Project Rules
 
-本项目是通用长篇小说设定分析工作流，用于分析长篇小说、系列小说、单元故事型小说、案件型小说、冒险型小说、奇幻/民俗/灵异题材小说，并把原文整理为角色人设、世界观设定、剧情大纲、时间线、关系网、SillyTavern 世界书和角色卡。
+本项目是通用长篇小说设定分析工作流，用于分析长篇小说、系列小说、单元故事型小说、案件型小说、冒险型小说、奇幻/民俗/灵异题材小说，并把原文整理为角色人设、世界观设定、剧情大纲、时间线、关系网、SillyTavern 世界书和角色汇总。
 
 ## 核心原则
 
@@ -22,11 +22,11 @@
 
 完整阶段流程、脚本职责表、星辰工坊角色卡/世界书输出规范，以**单一真源**维护在：
 - `.agents/skills/novel-lore-digest/references/workflow.md`（详细阶段 + 脚本职责 + 输出格式）
-- `prompts/`（每个阶段的具体提示词：00→10，以及 一键启动 / 继续下一步 / 试跑三篇 / 回填台词 / 同步到酒馆）
+- `prompts/`（每个阶段的具体提示词：00→11，以及 一键启动 / 继续下一步 / 试跑三篇 / 回填台词 / 同步到酒馆）
 
 执行前先读 workflow.md，按其顺序推进。**不要在本文件重复维护阶段细节，避免漂移。**
 
-阶段骨架（概览）：读配置 → 准备文本 → 分析计划 → 局部笔记（含对话台词） → 角色出场表 → 实体归并 → 剧情/世界观汇总 → SillyTavern 世界书 + 星辰角色卡（主角 `<Character_>` / 配角 `<NPC_>`） → 角色卡归并 → 一致性检查。
+阶段骨架（概览）：读配置 → 准备文本 → 分析计划 → 局部笔记（含对话台词） → 角色出场表 → 实体归并 → 剧情/世界观汇总 → SillyTavern 世界书 + 角色汇总（主角 `<Character_>` / 配角 `<NPC_>`） → 角色汇总归并核查 → 导出一张作品名 SillyTavern 作品角色卡 JSON（内容全部内嵌在 `character_book`） → 一致性检查。
 
 ## 懒人模式
 
@@ -51,4 +51,6 @@
 - “导出世界书导入块”
 - “准备星辰工坊导入”
 
-你必须读取 prompts/同步到酒馆.md，并优先运行 `python scripts/export_worldbook_for_starforge.py`。不要直接修改 SillyTavern 存档或世界书数据库。
+你必须读取 prompts/同步到酒馆.md。默认优先运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `exports/sillytavern-story-card/{作品名}.json`；只有用户明确要求“导出世界书导入块”或“准备星辰工坊导入”时，才运行 `python scripts/export_worldbook_for_starforge.py`。不要直接修改 SillyTavern 存档或世界书数据库。
+
+

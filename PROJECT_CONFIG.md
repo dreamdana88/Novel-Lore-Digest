@@ -1,4 +1,4 @@
-# PROJECT_CONFIG
+﻿# PROJECT_CONFIG
 
 ## 作品基本信息
 - 作品名：
@@ -36,7 +36,7 @@
 - 悬疑伏笔
 - 文风分析
 - SillyTavern 世界书
-- SillyTavern 角色卡
+- SillyTavern 角色汇总
 
 ## 目标角色清单
 
@@ -57,7 +57,7 @@
 
 ## 输出目标
 - 是否生成 SillyTavern 世界书：
-- 是否生成 SillyTavern 角色卡：
+- 是否生成 SillyTavern 角色汇总：
 - 是否生成剧情大纲：
 - 是否生成时间线：
 - 是否生成关系网：
@@ -70,3 +70,4 @@
 - 重点关注某几个主要角色。
 - 重点整理世界观规则。
 - 需要区分原文确定信息和推测信息。
+

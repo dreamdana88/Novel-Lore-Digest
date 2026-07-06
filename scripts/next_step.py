@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pathlib import Path
 
@@ -11,6 +11,7 @@ INDEX = ROOT / "index"
 NOTES = ROOT / "notes"
 ENTITIES = ROOT / "entities"
 OUTPUTS = ROOT / "outputs"
+EXPORTS = ROOT / "exports"
 NEXT_STEP = INDEX / "下一步.md"
 
 REQUIRED_CONFIG_LABELS = [
@@ -20,7 +21,7 @@ REQUIRED_CONFIG_LABELS = [
     "分析重点",
     "需要深度分析的主要角色",
     "是否生成 SillyTavern 世界书",
-    "是否生成 SillyTavern 角色卡",
+    "是否生成 SillyTavern 角色汇总",
 ]
 
 PLACEHOLDER_HINTS = ["尚未生成", "尚未归并", "暂无", "- 暂无"]
@@ -43,7 +44,7 @@ def has_files(path: Path, suffixes: set[str] | None = None) -> bool:
     if not path.exists():
         return False
     for item in path.rglob("*"):
-        if item.is_file() and item.name != ".gitkeep" and (suffixes is None or item.suffix.lower() in suffixes):
+        if item.is_file() and (suffixes is None or item.suffix.lower() in suffixes):
             return True
     return False
 
@@ -63,7 +64,7 @@ def config_missing() -> list[str]:
         missing.append("分析重点")
     if not _has_nonempty_under_heading(text, "### 需要深度分析的主要角色"):
         missing.append("目标角色清单")
-    for label in ["是否生成 SillyTavern 世界书", "是否生成 SillyTavern 角色卡"]:
+    for label in ["是否生成 SillyTavern 世界书", "是否生成 SillyTavern 角色汇总"]:
         if not _value_after_label(text, label):
             missing.append(label)
     return missing
@@ -138,6 +139,9 @@ def decide() -> tuple[str, str, list[str]]:
         f"entities/characters.md：{'已有内容' if meaningful(ENTITIES / 'characters.md') else '未归并'}",
         f"entities/rules.md：{'已有内容' if meaningful(ENTITIES / 'rules.md') else '未归并'}",
         f"outputs/SillyTavern世界书.md：{'已有内容' if meaningful(OUTPUTS / 'SillyTavern世界书.md') else '未生成'}",
+        f"outputs/SillyTavern角色汇总/：{'已有角色文件' if has_files(OUTPUTS / 'SillyTavern角色汇总', {'.md'}) else '未生成角色文件'}",
+        f"outputs/SillyTavern角色汇总.md：{'已有核查汇总' if meaningful(OUTPUTS / 'SillyTavern角色汇总.md') else '未汇总'}",
+        f"exports/sillytavern-story-card/：{'已有作品角色卡 JSON' if has_files(EXPORTS / 'sillytavern-story-card', {'.json'}) else '未导出'}",
     ]
 
     if missing:
@@ -158,7 +162,13 @@ def decide() -> tuple[str, str, list[str]]:
         return "归并世界观", "开始归并世界观。", status
     if not meaningful(OUTPUTS / "SillyTavern世界书.md"):
         return "输出 SillyTavern 世界书", "输出 SillyTavern 世界书。", status
-    return "生成待核查清单或输出角色卡", "继续下一步。", status
+    if not has_files(OUTPUTS / "SillyTavern角色汇总", {".md"}):
+        return "输出 SillyTavern 角色汇总", "输出 SillyTavern 角色汇总。", status
+    if not meaningful(OUTPUTS / "SillyTavern角色汇总.md"):
+        return "归并角色汇总用于核查", "归并角色卡。", status
+    if not has_files(EXPORTS / "sillytavern-story-card", {".json"}):
+        return "导出 SillyTavern 作品角色卡 JSON", "同步到酒馆。", status
+    return "生成待核查清单或复查最终导出", "继续下一步。", status
 
 
 def main() -> None:
@@ -184,3 +194,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -1,4 +1,4 @@
-"""重置项目为空白模板状态。
+﻿"""重置项目为空白模板状态。
 
 用法：
     python scripts/reset_to_template.py
@@ -77,7 +77,7 @@ BLANK_CONFIG = """# PROJECT_CONFIG
 - 悬疑伏笔
 - 文风分析
 - SillyTavern 世界书
-- SillyTavern 角色卡
+- SillyTavern 角色汇总
 
 ## 目标角色清单
 
@@ -98,7 +98,7 @@ BLANK_CONFIG = """# PROJECT_CONFIG
 
 ## 输出目标
 - 是否生成 SillyTavern 世界书：
-- 是否生成 SillyTavern 角色卡：
+- 是否生成 SillyTavern 角色汇总：
 - 是否生成剧情大纲：
 - 是否生成时间线：
 - 是否生成关系网：
@@ -130,7 +130,7 @@ def main() -> None:
     for d in CLEAR_DIRS:
         d.mkdir(parents=True, exist_ok=True)
         for f in d.rglob("*"):
-            if f.is_file() and f.name != ".gitkeep":
+            if f.is_file():
                 f.unlink()
         print(f"已清空: {d.relative_to(ROOT)}")
 
@@ -161,3 +161,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

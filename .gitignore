@@ -1,4 +1,4 @@
-# User source files and generated analysis artifacts
+﻿# User source files and generated analysis artifacts
 source_raw/*
 !source_raw/.gitkeep
 
@@ -14,9 +14,9 @@ notes/arc-notes/*
 
 outputs/*
 !outputs/.gitkeep
-!outputs/SillyTavern角色卡/
-outputs/SillyTavern角色卡/*
-!outputs/SillyTavern角色卡/.gitkeep
+!outputs/SillyTavern角色汇总/
+outputs/SillyTavern角色汇总/*
+!outputs/SillyTavern角色汇总/.gitkeep
 
 exports/*
 !exports/.gitkeep
@@ -38,3 +38,4 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+

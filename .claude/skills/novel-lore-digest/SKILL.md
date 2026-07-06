@@ -1,4 +1,4 @@
----
+﻿---
 name: novel-lore-digest
 description: Use for the Novel Lore Digest project — a pipeline for extracting structured lore from long novels and story collections. Triggers broadly: when users want lore artifacts (角色卡, 世界书, 关系网, 时间线) derived from analyzing existing fiction; when source files like source_raw/ or PROJECT_CONFIG.md are mentioned; when workflow commands appear (启动 Novel Lore Digest, 试跑三篇, 继续下一步, 同步到酒馆, 导出世界书导入块); or when a user asks how to begin turning a novel into SillyTavern content. Not for: writing new fiction, building SillyTavern web UIs, or file format conversion.
 ---
@@ -42,9 +42,9 @@ Confirm:
 
 ## Workflow
 
-The single source of truth for detailed stages, script duties, and StarForge card/worldbook output specs is `references/workflow.md` + `prompts/` (00→10, plus 一键启动 / 继续下一步 / 试跑三篇 / 回填台词 / 同步到酒馆). Read workflow.md and follow its order. Do not restate stage detail here — keep it as overview only to avoid drift.
+The single source of truth for detailed stages, script duties, and StarForge/SillyTavern output specs is `references/workflow.md` + `prompts/` (00→11, plus 一键启动 / 继续下一步 / 试跑三篇 / 回填台词 / 同步到酒馆). Read workflow.md and follow its order. Do not restate stage detail here — keep it as overview only to avoid drift.
 
-Skeleton: read PROJECT_CONFIG → prepare text → analysis plan → local notes (with character dialogue lines) → 角色出场表 → merge entities → plot/worldbuilding/timeline summaries → SillyTavern worldbook + StarForge character cards (主角 `<Character_>` / 配角 `<NPC_>`) → merge character cards → consistency check + pending list.
+Skeleton: read PROJECT_CONFIG → prepare text → analysis plan → local notes (with character dialogue lines) → 角色出场表 → merge entities → plot/worldbuilding/timeline summaries → SillyTavern worldbook + 角色汇总（主角 `<Character_>` / 配角 `<NPC_>`） → merge role summary for review → export one work-title SillyTavern character JSON with all content embedded in `character_book` → consistency check + pending list.
 
 ## Evidence rule
 
@@ -75,6 +75,7 @@ If the user says “回填台词” / “回填语料”, read `prompts/回填�
 
 If the user says “同步到酒馆”, “导出世界书导入块”, or “准备星辰工坊导入”:
 1. Read `prompts/同步到酒馆.md`.
-2. Run `python scripts/export_worldbook_for_starforge.py`.
-3. Use `exports/star-forge-import/世界书导入块.md` as the copyable import block for 星辰工坊世界书管理器.
+2. Default to `python scripts/export_story_card_for_sillytavern.py` for a one-card SillyTavern import unless the user explicitly asks for the legacy StarForge worldbook block.
+3. Use `exports/sillytavern-story-card/{作品名}.json` as the final SillyTavern import artifact.
 4. Do not directly modify SillyTavern storage files.
+

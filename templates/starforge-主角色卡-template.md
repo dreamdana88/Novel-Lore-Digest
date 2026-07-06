@@ -1,7 +1,7 @@
 # 星辰工坊 · 主角色卡模板（Character_Blueprint）
 
 用于 PROJECT_CONFIG.md 中「需要深度分析的主要角色」。
-由 `entities/characters.md` 的分析内容转写而来，输出到 `outputs/SillyTavern角色卡/`。
+由 `entities/characters.md` 的分析内容转写而来，输出到 `outputs/SillyTavern角色汇总/`。
 依据（项目内存档）：`references/星辰工坊规范/捏人-主角色规范.txt`、`references/星辰工坊规范/什么是世界书.yaml`。
 
 ## 填写规则

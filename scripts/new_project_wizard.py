@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pathlib import Path
 
@@ -44,18 +44,18 @@ DEFAULT_CONFIG = """# PROJECT_CONFIG
 - 悬疑伏笔
 - 文风分析
 - SillyTavern 世界书
-- SillyTavern 角色卡
+- SillyTavern 角色汇总
 
 ## 目标角色清单
 
 ### 需要深度分析的主要角色
--
+- 
 
 ### 只需简要记录的角色
--
+- 
 
 ### 暂不分析/忽略的角色
--
+- 
 
 ## 分析粒度
 - 默认分块大小：12000-15000 中文字
@@ -65,7 +65,7 @@ DEFAULT_CONFIG = """# PROJECT_CONFIG
 
 ## 输出目标
 - 是否生成 SillyTavern 世界书：
-- 是否生成 SillyTavern 角色卡：
+- 是否生成 SillyTavern 角色汇总：
 - 是否生成剧情大纲：
 - 是否生成时间线：
 - 是否生成关系网：
@@ -107,7 +107,7 @@ ANALYSIS_GOALS = [
     "悬疑伏笔",
     "文风分析",
     "SillyTavern 世界书",
-    "SillyTavern 角色卡",
+    "SillyTavern 角色汇总",
 ]
 
 
@@ -213,7 +213,7 @@ def main() -> None:
     deep_roles = prompt("需要深度分析的主要角色（多个用逗号分隔）")
     brief_roles = prompt("只需简要记录的角色（可留空，多个用逗号分隔）")
     worldbook = prompt_yes_no("是否生成 SillyTavern 世界书")
-    charcards = prompt_yes_no("是否生成 SillyTavern 角色卡")
+    charcards = prompt_yes_no("是否生成 SillyTavern 角色汇总")
     outline = prompt_yes_no("是否生成剧情大纲")
     timeline = prompt_yes_no("是否生成时间线")
     relation = prompt_yes_no("是否生成关系网")
@@ -229,7 +229,7 @@ def main() -> None:
     text = replace_section_list(text, "### 需要深度分析的主要角色", [v.strip() for v in deep_roles.replace("，", ",").split(",")], overwrite)
     text = replace_section_list(text, "### 只需简要记录的角色", [v.strip() for v in brief_roles.replace("，", ",").split(",")], overwrite)
     text = replace_line(text, "是否生成 SillyTavern 世界书", worldbook, overwrite)
-    text = replace_line(text, "是否生成 SillyTavern 角色卡", charcards, overwrite)
+    text = replace_line(text, "是否生成 SillyTavern 角色汇总", charcards, overwrite)
     text = replace_line(text, "是否生成剧情大纲", outline, overwrite)
     text = replace_line(text, "是否生成时间线", timeline, overwrite)
     text = replace_line(text, "是否生成关系网", relation, overwrite)
