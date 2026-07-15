@@ -7,29 +7,38 @@ description: "Use for the Novel Lore Digest project — a pipeline for extractin
 
 This file is the Codex discovery entry for the project workflow. Keep detailed rules in shared project files so Codex and Claude Code use the same source of truth.
 
+## Repository root resolution
+
+Do not assume the current working directory is the repository root.
+
+1. Prefer `git rev-parse --show-toplevel` to determine the repository root from the current location.
+2. If the current location is outside the worktree, use the discovered directory containing this `SKILL.md` and run `git -C "<skill-directory>" rev-parse --show-toplevel`.
+3. Store the canonical result as `<repo-root>` and verify that `<repo-root>/AGENTS.md` and `<repo-root>/PROJECT_CONFIG.md` exist.
+4. Resolve every project resource named below against `<repo-root>`. Before running any project script, set its working directory to `<repo-root>`.
+
 ## Required navigation
 
-1. Read the project-root `PROJECT_CONFIG.md`.
-2. Read the project-root `AGENTS.md` for safety, evidence, and lifecycle rules.
-3. Read the project-root `references/workflow.md` for the stage map, script duties, and output specifications.
-4. Read only the current stage file under `prompts/` and the templates or references it names.
+1. Read `<repo-root>/PROJECT_CONFIG.md`.
+2. Read `<repo-root>/AGENTS.md` for safety, evidence, and lifecycle rules.
+3. Read `<repo-root>/references/workflow.md` for the stage map, script duties, and output specifications.
+4. Read only the current stage file under `<repo-root>/prompts/` and the templates or references it names.
 
 ## Stage selection
 
 For “启动 Novel Lore Digest”, “继续下一步”, “按流程推进”, “试跑三篇”, or similar commands:
 
-1. Run `python scripts/next_step.py`.
-2. Read `workspace/index/下一步.md`.
-3. Read `prompts/一键启动.md` or `prompts/继续下一步.md`.
+1. With the working directory set to `<repo-root>`, run `python scripts/next_step.py`.
+2. Read `<repo-root>/workspace/index/下一步.md`.
+3. Read `<repo-root>/prompts/一键启动.md` or `<repo-root>/prompts/继续下一步.md`.
 4. Execute exactly one major stage.
-5. Return the next short command recorded in `workspace/index/下一步.md`.
+5. Return the next short command recorded in `<repo-root>/workspace/index/下一步.md`.
 
-For “回填台词/语料”, read `prompts/回填台词语料.md`. For SillyTavern export commands, read `prompts/同步到酒馆.md`.
+For “回填台词/语料”, read `<repo-root>/prompts/回填台词语料.md`. For SillyTavern export commands, read `<repo-root>/prompts/同步到酒馆.md`.
 
 ## Hard boundaries
 
-- Never modify `source_raw/`.
-- Use only evidence from `source_raw/` and `workspace/source/`.
+- Never modify `<repo-root>/source_raw/`.
+- Use only evidence from `<repo-root>/source_raw/` and `<repo-root>/workspace/source/`.
 - Do not skip local notes before global merging or final output.
 - Mark uncertainty as 【待核查】 and missing dialogue as 【待回填语料】.
 - Keep important conclusions traceable to a source file, story, chapter, or local note.

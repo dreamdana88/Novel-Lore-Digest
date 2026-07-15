@@ -79,6 +79,10 @@ source_raw/ → workspace/ → outputs/
 
 分析不同作品时，通常只需要修改 `PROJECT_CONFIG.md`，再替换 `source_raw/` 中的原文，不需要重写整个工作流。
 
+## 恢复为空白模板
+
+运行 `python scripts/reset_to_template.py` 会不可恢复地删除 `source_raw/` 中的原文、`workspace/` 中的中间数据和 `outputs/` 中的最终输出，并把 `PROJECT_CONFIG.md` 恢复为空白模板。执行前请备份所有需要保留的原文和结果。
+
 ## Skill 位置
 
 - Codex Skill：`.agents/skills/novel-lore-digest/`

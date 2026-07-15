@@ -8,6 +8,11 @@ workspace/source/*
 workspace/index/*
 !workspace/index/.gitkeep
 
+workspace/notes/*
+!workspace/notes/story-notes/
+!workspace/notes/chapter-notes/
+!workspace/notes/arc-notes/
+
 workspace/notes/story-notes/*
 !workspace/notes/story-notes/.gitkeep
 workspace/notes/chapter-notes/*

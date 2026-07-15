@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import shutil
 import sys
 from pathlib import Path
 
@@ -23,16 +24,24 @@ WORKSPACE = ROOT / "workspace"
 CONFIG = ROOT / "PROJECT_CONFIG.md"
 CONFIG_TEMPLATE = ROOT / "templates" / "project-config-template.md"
 
-CLEAR_DIRS = [
-    ROOT / "source_raw",
-    WORKSPACE / "source",
-    WORKSPACE / "index",
-    WORKSPACE / "notes" / "story-notes",
-    WORKSPACE / "notes" / "chapter-notes",
-    WORKSPACE / "notes" / "arc-notes",
-    WORKSPACE / "entities",
-    ROOT / "outputs",
-]
+# Runtime roots and the tracked skeleton directories that must contain .gitkeep.
+# Path(".") means the runtime root itself owns the placeholder.
+TEMPLATE_SKELETON = {
+    ROOT / "source_raw": (Path("."),),
+    WORKSPACE / "source": (Path("."),),
+    WORKSPACE / "index": (Path("."),),
+    WORKSPACE / "notes": (
+        Path("story-notes"),
+        Path("chapter-notes"),
+        Path("arc-notes"),
+    ),
+    WORKSPACE / "entities": (Path("."),),
+    ROOT / "outputs": (
+        Path("."),
+        Path("SillyTavern角色汇总"),
+        Path("star-forge-import"),
+    ),
+}
 
 
 def confirm() -> bool:
@@ -42,11 +51,18 @@ def confirm() -> bool:
     return answer == "yes"
 
 
-def clear_generated_files(directory: Path) -> None:
+def restore_runtime_skeleton(directory: Path, gitkeep_dirs: tuple[Path, ...]) -> None:
     directory.mkdir(parents=True, exist_ok=True)
-    for path in directory.rglob("*"):
-        if path.is_file() and path.name != ".gitkeep":
+    for path in directory.iterdir():
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path)
+        else:
             path.unlink()
+
+    for relative_dir in gitkeep_dirs:
+        skeleton_dir = directory / relative_dir
+        skeleton_dir.mkdir(parents=True, exist_ok=True)
+        (skeleton_dir / ".gitkeep").write_bytes(b"")
 
 
 def main() -> None:
@@ -54,11 +70,11 @@ def main() -> None:
         print("已取消。")
         return
 
-    for directory in CLEAR_DIRS:
-        clear_generated_files(directory)
-        print(f"已清空：{directory.relative_to(ROOT)}")
+    for directory, gitkeep_dirs in TEMPLATE_SKELETON.items():
+        restore_runtime_skeleton(directory, gitkeep_dirs)
+        print(f"已恢复目录：{directory.relative_to(ROOT)}")
 
-    CONFIG.write_text(CONFIG_TEMPLATE.read_text(encoding="utf-8"), encoding="utf-8")
+    CONFIG.write_bytes(CONFIG_TEMPLATE.read_bytes())
     print("已重置：PROJECT_CONFIG.md")
     print("\n模板已还原为空白状态。")
     print("下次开始：填写 PROJECT_CONFIG.md，把小说 txt/md 放进 source_raw/。")
