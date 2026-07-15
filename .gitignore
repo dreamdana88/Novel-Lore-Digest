@@ -2,15 +2,21 @@
 source_raw/*
 !source_raw/.gitkeep
 
-source/*
-!source/.gitkeep
+workspace/source/*
+!workspace/source/.gitkeep
 
-notes/story-notes/*
-!notes/story-notes/.gitkeep
-notes/chapter-notes/*
-!notes/chapter-notes/.gitkeep
-notes/arc-notes/*
-!notes/arc-notes/.gitkeep
+workspace/index/*
+!workspace/index/.gitkeep
+
+workspace/notes/story-notes/*
+!workspace/notes/story-notes/.gitkeep
+workspace/notes/chapter-notes/*
+!workspace/notes/chapter-notes/.gitkeep
+workspace/notes/arc-notes/*
+!workspace/notes/arc-notes/.gitkeep
+
+workspace/entities/*
+!workspace/entities/.gitkeep
 
 outputs/*
 !outputs/.gitkeep
@@ -18,12 +24,9 @@ outputs/*
 outputs/SillyTavern角色汇总/*
 !outputs/SillyTavern角色汇总/.gitkeep
 
-exports/*
-!exports/.gitkeep
-
-# Generated indexes
-index/*
-!index/.gitkeep
+!outputs/star-forge-import/
+outputs/star-forge-import/*
+!outputs/star-forge-import/.gitkeep
 
 # Common ebook and document source formats
 *.epub

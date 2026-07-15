@@ -1,7 +1,7 @@
 # 星辰工坊 · 主角色卡模板（Character_Blueprint）
 
 用于 PROJECT_CONFIG.md 中「需要深度分析的主要角色」。
-由 `entities/characters.md` 的分析内容转写而来，输出到 `outputs/SillyTavern角色汇总/`。
+由 `workspace/entities/characters.md` 的分析内容转写而来，输出到 `outputs/SillyTavern角色汇总/`。
 依据（项目内存档）：`references/星辰工坊规范/捏人-主角色规范.txt`、`references/星辰工坊规范/什么是世界书.yaml`。
 
 ## 填写规则
@@ -11,7 +11,7 @@
 - 能从原文/分析层推断的字段（social_mask 公我/私我/极限反应、goals、personality 等）照实填写，证据薄弱才标 `【待核查】`。
 - `Appearance` 必须优先回查原文/局部笔记中的外貌证据，覆盖现代人形、妖怪原形/本体、伪装形态、过去时期外貌；发色、瞳色、五官、体型、衣着、气质没有明确证据时逐项标 `【待核查】`，不要只写笼统身份。
 - 小说根本不写的纯设定字段（体香 scent、生日 birthday、贞操 virgin、charm_reframing、safety_valve，以及与 `{{user}}` 的 about_user 关系），**一律保留 `【需自行补充】` 占位，不要凭空编造**。
-- 语料 `examples` 必须优先使用 `entities/characters.md` 中汇总的完整原文台词/典型语料；不足时标 `【待回填语料】`，不要仿写成原文。
+- 语料 `examples` 必须优先使用 `workspace/entities/characters.md` 中汇总的完整原文台词/典型语料；不足时标 `【待回填语料】`，不要仿写成原文。
 - 不确定但有原文线索的信息，可填入并加 `【待核查】`。
 - XML 之外，在文件末尾保留「来源附录」，记录关键设定对应的篇目，方便复查。
 

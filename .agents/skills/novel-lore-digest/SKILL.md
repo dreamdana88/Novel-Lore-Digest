@@ -5,75 +5,32 @@ description: "Use for the Novel Lore Digest project — a pipeline for extractin
 
 # Novel Lore Digest
 
-This skill helps analyze long novels, story collections, series fiction, case-based fiction, adventure arcs, fantasy worldbuilding, folklore horror, urban fantasy, and supernatural investigation stories.
+This file is the Codex discovery entry for the project workflow. Keep detailed rules in shared project files so Codex and Claude Code use the same source of truth.
 
-Use this skill when the user wants to turn source fiction into reusable lore documents, including:
-- character profiles
-- relationship maps
-- worldbuilding rules
-- timelines
-- plot outlines
-- species or monster rules
-- organization or faction records
-- SillyTavern worldbook entries
-- SillyTavern character cards
+## Required navigation
 
-## Required first step
+1. Read the project-root `PROJECT_CONFIG.md`.
+2. Read the project-root `AGENTS.md` for safety, evidence, and lifecycle rules.
+3. Read the project-root `references/workflow.md` for the stage map, script duties, and output specifications.
+4. Read only the current stage file under `prompts/` and the templates or references it names.
 
-Always read PROJECT_CONFIG.md before doing anything else.
+## Stage selection
 
-Confirm:
-- work title
-- author
-- structure type
-- analysis goals
-- target characters
-- output targets
-- special cautions
+For “启动 Novel Lore Digest”, “继续下一步”, “按流程推进”, “试跑三篇”, or similar commands:
 
-## Never do these
+1. Run `python scripts/next_step.py`.
+2. Read `workspace/index/下一步.md`.
+3. Read `prompts/一键启动.md` or `prompts/继续下一步.md`.
+4. Execute exactly one major stage.
+5. Return the next short command recorded in `workspace/index/下一步.md`.
 
-- Never modify source_raw/.
-- Never invent information not supported by the source text.
-- Never skip local notes and jump directly to final character cards or worldbook entries.
-- Never turn a one-off story rule into a global setting rule without evidence.
-- Never deeply analyze one-time background characters unless PROJECT_CONFIG.md asks for it.
+For “回填台词/语料”, read `prompts/回填台词语料.md`. For SillyTavern export commands, read `prompts/同步到酒馆.md`.
 
-## Workflow
+## Hard boundaries
 
-The single source of truth for detailed stages, script duties, and StarForge/SillyTavern output specs is `references/workflow.md` + `prompts/` (00→11, plus 一键启动 / 继续下一步 / 试跑三篇 / 回填台词 / 同步到酒馆). Read workflow.md and follow its order. Do not restate stage detail here — keep it as overview only to avoid drift.
-
-Skeleton: read PROJECT_CONFIG → prepare text → analysis plan → local notes (with character dialogue lines) → 角色出场表 → merge entities → plot/worldbuilding/timeline summaries → SillyTavern worldbook + 角色汇总（主角 `<Character_>` / 配角 `<NPC_>`） → merge role summary for review → export one work-title SillyTavern character JSON with all content embedded in `character_book` → consistency check + pending list.
-
-## Evidence rule
-
-Important conclusions must include source file, story title, chapter title, or local-note reference.
-
-Uncertain information must be marked as 【待核查】.
-
-## Style
-
-Use clear Chinese output.
-Prefer structured markdown.
-Keep outputs practical for SillyTavern and immersive roleplay use.
-
-## Lazy Mode
-
-If the user says “启动 Novel Lore Digest”, “继续下一步”, “按流程推进”, “试跑三篇”, or similar short commands, do not ask them to paste long prompts.
-
-Instead:
-1. Run `python scripts/next_step.py`. It deterministically inspects project state and writes `index/下一步.md` with the suggested action, the exact short command to give next, and a status snapshot. Trust this over guessing the stage yourself.
-2. Read PROJECT_CONFIG.md if you have not already this session.
-3. Read prompts/一键启动.md or prompts/继续下一步.md for the detailed instructions of the suggested stage.
-4. Execute only that one stage — never chain several big stages at once.
-5. At the end, tell the user the next short command (copy it from `index/下一步.md`).
-
-If the user says “回填台词” / “回填语料”, read `prompts/回填台词语料.md` and backfill the dialogue field of existing local notes (re-read the source text, do not invent).
-
-## Export To SillyTavern
-
-If the user says “同步到酒馆”, “导出世界书导入块”, or “准备星辰工坊导入”:
-1. Read `prompts/同步到酒馆.md`.
-2. Default to `python scripts/export_story_card_for_sillytavern.py` for a one-card SillyTavern import unless the user explicitly asks for the legacy StarForge worldbook block.
-3. Use `outputs/sillytavern-story-card/{作品名}.json` as the final SillyTavern import artifact.
-4. Do not directly modify SillyTavern storage files.
+- Never modify `source_raw/`.
+- Use only evidence from `source_raw/` and `workspace/source/`.
+- Do not skip local notes before global merging or final output.
+- Mark uncertainty as 【待核查】 and missing dialogue as 【待回填语料】.
+- Keep important conclusions traceable to a source file, story, chapter, or local note.
+- Write user-facing analysis in clear Chinese.

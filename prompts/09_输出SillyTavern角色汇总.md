@@ -1,4 +1,4 @@
-请基于 entities/characters.md，为 PROJECT_CONFIG.md 中的目标角色生成星辰工坊格式的角色汇总文件，输出到 outputs/SillyTavern角色汇总/。
+请基于 workspace/entities/characters.md，为 PROJECT_CONFIG.md 中的目标角色生成星辰工坊格式的角色汇总文件，输出到 outputs/SillyTavern角色汇总/。
 
 每个角色一个 markdown 文件（内含 XML 块 + 来源附录）。
 
@@ -18,10 +18,10 @@
 常以高大英俊、衣着时髦的青年形象在人类社会活动。
    - 不要用篇目或章节标题当事件名（如"在泉先儿事件中守护王老头家"）；改为描述事件本身（如"曾在王老头家遭受外来威胁时参与守护"）或用世界内称呼。
    - 来源篇目只写在卡末「来源附录」，不放入 XML 正文。
-2. 凡能从 entities/characters.md 或局部笔记得到的字段，照实填写，并在「来源附录」标注篇目。
+2. 凡能从 workspace/entities/characters.md 或局部笔记得到的字段，照实填写，并在「来源附录」标注篇目。
    - 特别是 `social_mask`（公我/私我/极限反应）、`goals`、`personality` 通常能从角色行为推断，要尽量填满：公我=对外/陌生人面前的样子，私我=对家人挚友的内在，极限反应=极端场景下的本质。证据薄弱才标 `【待核查】`。
 3. 只有小说根本不写的纯设定字段（virgin / birthday / scent / charm_reframing / safety_valve，以及与 `{{user}}` 的 about_user 关系）才保留 `【需自行补充】` 占位，**不要编造**。
-4. `speech_style.examples`（主角）/ `Interaction_Pattern.speech` 的语料（配角）必须优先使用 entities/characters.md 中汇总的完整原文台词/典型语料；语料不足时标 `【待回填语料】`，不要凭空仿写成原文。
+4. `speech_style.examples`（主角）/ `Interaction_Pattern.speech` 的语料（配角）必须优先使用 workspace/entities/characters.md 中汇总的完整原文台词/典型语料；语料不足时标 `【待回填语料】`，不要凭空仿写成原文。
 5. 不确定但有原文线索的信息可填入并加 `【待核查】`。
 6. 不要把角色写成通用模板人设，保留原作的行为逻辑和说话气质。
 7. 每张卡末尾的「来源附录」必须列出：核心设定来源篇目、语料来源篇目，以及本卡所有 `【需自行补充】`/`【待回填语料】`/`【待核查】` 清单，方便后续补全。

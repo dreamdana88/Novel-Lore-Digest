@@ -1,6 +1,6 @@
 # {{角色名}}
 
-> 分析层档案，写入 `entities/characters.md`。区分【确定信息】/【推测信息】，每条结论标来源篇目。
+> 分析层档案，写入 `workspace/entities/characters.md`。区分【确定信息】/【推测信息】，每条结论标来源篇目。
 > 本档案是星辰工坊角色卡的素材源：主角→`starforge-主角色卡-template.md`，配角→`starforge-配角NPC卡-template.md`。
 > 小说没有的设定字段（生日/体香/social_mask/about_user 等）不在此编造，留到角色卡阶段标【需自行补充】。
 

@@ -4,13 +4,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "source"
+WORKSPACE = ROOT / "workspace"
+SOURCE = WORKSPACE / "source"
 NOTE_DIRS = [
-    ROOT / "notes" / "story-notes",
-    ROOT / "notes" / "chapter-notes",
-    ROOT / "notes" / "arc-notes",
+    WORKSPACE / "notes" / "story-notes",
+    WORKSPACE / "notes" / "chapter-notes",
+    WORKSPACE / "notes" / "arc-notes",
 ]
-OUTPUT = ROOT / "index" / "分析进度.md"
+OUTPUT = WORKSPACE / "index" / "分析进度.md"
 
 
 def note_candidates(source_file: Path) -> set[str]:

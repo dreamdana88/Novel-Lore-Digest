@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "outputs" / "SillyTavern世界书.md"
-EXPORT_DIR = ROOT / "exports" / "star-forge-import"
+EXPORT_DIR = ROOT / "outputs" / "star-forge-import"
 EXPORT_FILE = EXPORT_DIR / "世界书导入块.md"
 REPORT_FILE = EXPORT_DIR / "世界书导入检查.md"
 

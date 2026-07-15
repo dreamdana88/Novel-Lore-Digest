@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -6,10 +6,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "PROJECT_CONFIG.md"
 SOURCE_RAW = ROOT / "source_raw"
-SOURCE = ROOT / "source"
-INDEX = ROOT / "index"
-NOTES = ROOT / "notes"
-ENTITIES = ROOT / "entities"
+WORKSPACE = ROOT / "workspace"
+SOURCE = WORKSPACE / "source"
+INDEX = WORKSPACE / "index"
+NOTES = WORKSPACE / "notes"
+ENTITIES = WORKSPACE / "entities"
 OUTPUTS = ROOT / "outputs"
 NEXT_STEP = INDEX / "下一步.md"
 
@@ -43,7 +44,7 @@ def has_files(path: Path, suffixes: set[str] | None = None) -> bool:
     if not path.exists():
         return False
     for item in path.rglob("*"):
-        if item.is_file() and (suffixes is None or item.suffix.lower() in suffixes):
+        if item.is_file() and item.name != ".gitkeep" and (suffixes is None or item.suffix.lower() in suffixes):
             return True
     return False
 
@@ -89,14 +90,8 @@ def _section_has_selected(text: str, heading: str) -> bool:
         stripped = line.strip()
         if stripped.startswith("- 已选择：") and stripped.split("：", 1)[-1].strip():
             return True
-        if stripped.startswith("- ") and not any(hint in stripped for hint in ["请在下列", "请勾选或填写"]):
-            content = stripped[2:].strip()
-            if content and not content.endswith("："):
-                return True
-        if stripped.startswith("* ") and not any(hint in stripped for hint in ["请在下列", "请勾选或填写"]):
-            content = stripped[2:].strip()
-            if content and not content.endswith("："):
-                return True
+        if stripped.lower().startswith(("- [x] ", "* [x] ")):
+            return True
     return False
 
 
@@ -130,13 +125,13 @@ def decide() -> tuple[str, str, list[str]]:
     status = [
         f"PROJECT_CONFIG.md：{'缺失/未填完整' if missing else '已填写基本项'}",
         f"source_raw/：{'有原文文件' if has_files(SOURCE_RAW, {'.txt', '.md'}) else '无 txt/md 原文'}",
-        f"source/：{'已有 source 文件' if has_files(SOURCE) else '尚未准备'}",
-        f"index/文本索引.md：{'存在' if meaningful(INDEX / '文本索引.md') else '不存在或为空'}",
-        f"index/分析计划.md：{'存在' if meaningful(INDEX / '分析计划.md') else '不存在或为空'}",
+        f"workspace/source/：{'已有处理文本' if has_files(SOURCE) else '尚未准备'}",
+        f"workspace/index/文本索引.md：{'存在' if meaningful(INDEX / '文本索引.md') else '不存在或为空'}",
+        f"workspace/index/分析计划.md：{'存在' if meaningful(INDEX / '分析计划.md') else '不存在或为空'}",
         f"局部笔记：{note_count} 个",
-        f"index/角色出场表.md：{'存在' if meaningful(INDEX / '角色出场表.md') else '不存在或为空'}",
-        f"entities/characters.md：{'已有内容' if meaningful(ENTITIES / 'characters.md') else '未归并'}",
-        f"entities/rules.md：{'已有内容' if meaningful(ENTITIES / 'rules.md') else '未归并'}",
+        f"workspace/index/角色出场表.md：{'存在' if meaningful(INDEX / '角色出场表.md') else '不存在或为空'}",
+        f"workspace/entities/characters.md：{'已有内容' if meaningful(ENTITIES / 'characters.md') else '未归并'}",
+        f"workspace/entities/rules.md：{'已有内容' if meaningful(ENTITIES / 'rules.md') else '未归并'}",
         f"outputs/SillyTavern世界书.md：{'已有内容' if meaningful(OUTPUTS / 'SillyTavern世界书.md') else '未生成'}",
         f"outputs/SillyTavern角色汇总/：{'已有角色文件' if has_files(OUTPUTS / 'SillyTavern角色汇总', {'.md'}) else '未生成角色文件'}",
         f"outputs/SillyTavern角色汇总.md：{'已有核查汇总' if meaningful(OUTPUTS / 'SillyTavern角色汇总.md') else '未汇总'}",

@@ -1,4 +1,4 @@
-请基于 entities/ 和已完成的局部笔记，生成 outputs/SillyTavern世界书.md。
+请基于 workspace/entities/ 和已完成的局部笔记，生成 outputs/SillyTavern世界书.md。
 
 生成结构必须遵循星辰工坊世界书规范，参考：
 - templates/worldbook-entry-template.md

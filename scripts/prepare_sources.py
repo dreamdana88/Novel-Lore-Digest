@@ -6,8 +6,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_RAW = ROOT / "source_raw"
-SOURCE = ROOT / "source"
-INDEX = ROOT / "index" / "文本索引.md"
+WORKSPACE = ROOT / "workspace"
+SOURCE = WORKSPACE / "source"
+INDEX = WORKSPACE / "index" / "文本索引.md"
 
 ENCODINGS = ("utf-8-sig", "utf-8", "gb18030", "gbk", "big5")
 SPLIT_THRESHOLD_BYTES = 120 * 1024
