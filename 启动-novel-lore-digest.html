@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Novel Lore Digest · 小说设定分析任务生成器</title>
+    <link
+      rel="stylesheet"
+      href="tools/project-config-generator/project-config-generator.css"
+    />
+  </head>
+  <body>
+    <div id="nld-config-app" data-busy="false">
+      <!-- 头部：直接、克制、文学编辑台 -->
+      <header class="app-header">
+        <h1 class="app-title">Novel Lore Digest</h1>
+        <p class="app-tagline">
+          长篇小说设定分析任务生成器 · 将作品整理为 Agent 可直接执行的分析档案
+        </p>
+      </header>
+
+      <!-- 紧凑单行步骤条 -->
+      <ol id="nld-step-guide" class="step-bar" aria-label="操作流程">
+        <li class="step-node active">
+          <span class="step-digit">1</span> 填写设定
+        </li>
+        <li class="step-connector" aria-hidden="true"></li>
+        <li class="step-node">
+          <span class="step-digit">2</span> 导入原文（可选）
+        </li>
+        <li class="step-connector" aria-hidden="true"></li>
+        <li class="step-node"><span class="step-digit">3</span> 生成任务</li>
+      </ol>
+
+      <!-- 浏览器兼容性提示 (不支持时控制器移除 hidden) -->
+      <div id="nld-compat-banner" class="compat-alert" hidden>
+        <span class="alert-icon" aria-hidden="true">⚠️</span>
+        <p id="nld-compat-message"></p>
+      </div>
+
+      <!-- 区域快速跳转 -->
+      <nav id="nld-section-nav" class="quick-nav" aria-label="页面快速跳转">
+        <a href="#section-config" class="quick-link">设定配置</a>
+        <a href="#section-source" class="quick-link">原文导入</a>
+        <a href="#section-generate" class="quick-link">生成任务</a>
+      </nav>
+
+      <!-- 主表单 (单列轻量流) -->
+      <form id="nld-config-form" novalidate>
+        <!-- 区域 1：配置与设定 -->
+        <section id="section-config" class="flow-section">
+          <div class="section-title-wrap">
+            <h2 class="section-heading">1. 作品信息与设定</h2>
+            <p class="section-lead">
+              告诉 Agent 这是什么作品，以及你最想整理哪些设定维度。
+            </p>
+          </div>
+
+          <!-- 基础信息 (首屏直接出现作品名与作者) -->
+          <div class="field-row field-row-main">
+            <div class="form-group">
+              <label for="field-title" class="input-label"
+                >作品名 <span class="mark-required" title="必填">*</span></label
+              >
+              <input
+                id="field-title"
+                name="title"
+                data-field="title"
+                type="text"
+                autocomplete="off"
+                placeholder="例如：诡秘之主、道诡异仙"
+                class="text-input text-input-prominent"
+              />
+              <p
+                id="error-title"
+                data-error-for="title"
+                class="input-error-msg"
+              ></p>
+            </div>
+
+            <div class="form-group">
+              <label for="field-author" class="input-label"
+                >作者 <span class="mark-required" title="必填">*</span></label
+              >
+              <input
+                id="field-author"
+                name="author"
+                data-field="author"
+                type="text"
+                autocomplete="off"
+                placeholder="例如：爱潜水的乌贼（未知填「不详」）"
+                class="text-input text-input-prominent"
+              />
+              <p
+                id="error-author"
+                data-error-for="author"
+                class="input-error-msg"
+              ></p>
+            </div>
+          </div>
+
+          <!-- 更多作品信息 (渐进披露折叠) -->
+          <details class="fold-group">
+            <summary class="fold-trigger">
+              更多作品信息（语言、来源、日期）
+            </summary>
+            <div class="fold-body">
+              <div class="field-row field-row-triplet">
+                <div class="form-group">
+                  <label for="field-language" class="input-label">语言</label>
+                  <input
+                    id="field-language"
+                    name="language"
+                    data-field="language"
+                    type="text"
+                    value="中文"
+                    autocomplete="off"
+                    class="text-input"
+                  />
+                  <p
+                    id="error-language"
+                    data-error-for="language"
+                    class="input-error-msg"
+                  ></p>
+                </div>
+
+                <div class="form-group">
+                  <label for="field-source" class="input-label">文本来源</label>
+                  <input
+                    id="field-source"
+                    name="source"
+                    data-field="source"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="例如：起点精校版 / 出版社"
+                    class="text-input"
+                  />
+                  <p
+                    id="error-source"
+                    data-error-for="source"
+                    class="input-error-msg"
+                  ></p>
+                </div>
+
+                <div class="form-group">
+                  <label for="field-analysis-date" class="input-label"
+                    >分析日期</label
+                  >
+                  <input
+                    id="field-analysis-date"
+                    name="analysisDate"
+                    data-field="analysisDate"
+                    type="date"
+                    class="text-input"
+                  />
+                  <p
+                    id="error-analysis-date"
+                    data-error-for="analysisDate"
+                    class="input-error-msg"
+                  ></p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- 作品结构类型 -->
+          <fieldset id="fieldset-structure-types" class="option-fieldset">
+            <legend class="fieldset-title">
+              作品结构类型 <span class="mark-required" title="必填">*</span>
+              <span class="helper-inline">（可多选）</span>
+            </legend>
+            <p class="fieldset-desc">
+              选择最贴近的叙事模式，工作流将据此确定分篇分卷与归并策略。
+            </p>
+
+            <div class="tag-grid">
+              <label class="tag-label"
+                ><input
+                  id="structure-type-unit-stories"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="单元故事型"
+                />
+                <span>单元故事型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-serial-novel"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="连续长篇型"
+                />
+                <span>连续长篇型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-series-novel"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="系列长篇型"
+                />
+                <span>系列长篇型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-case-unit"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="案件单元型"
+                />
+                <span>案件单元型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-adventure-arc"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="冒险篇章型"
+                />
+                <span>冒险篇章型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-ensemble-epic"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="群像史诗型"
+                />
+                <span>群像史诗型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-fantasy-world"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="奇幻世界观型"
+                />
+                <span>奇幻世界观型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-urban-fantasy"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="都市奇幻型"
+                />
+                <span>都市奇幻型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-folk-mystery"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="民俗悬疑型"
+                />
+                <span>民俗悬疑型</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="structure-type-spirit-investigation"
+                  name="structureTypes"
+                  data-field="structureTypes"
+                  type="checkbox"
+                  value="灵异调查型"
+                />
+                <span>灵异调查型</span></label
+              >
+            </div>
+
+            <div class="custom-structure-row">
+              <label class="tag-label tag-label-other"
+                ><input
+                  id="structure-type-other"
+                  name="structureOtherFlag"
+                  data-field="structureOtherFlag"
+                  type="checkbox"
+                  value="其他"
+                />
+                <span>其他题材补充</span></label
+              >
+              <div class="custom-input-wrap">
+                <label for="field-other-structure" class="sr-only"
+                  >其他说明</label
+                >
+                <input
+                  id="field-other-structure"
+                  name="otherStructure"
+                  data-field="otherStructure"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="勾选后填写自定义结构或混合题材，如：科幻修仙群像流"
+                  class="text-input"
+                />
+              </div>
+            </div>
+            <p
+              id="error-structure-types"
+              data-error-for="structureTypes"
+              class="input-error-msg"
+            ></p>
+            <p
+              id="error-other-structure"
+              data-error-for="otherStructure"
+              class="input-error-msg"
+            ></p>
+          </fieldset>
+
+          <!-- 本次分析重点 -->
+          <fieldset id="fieldset-analysis-focus" class="option-fieldset">
+            <legend class="fieldset-title">
+              本次分析重点 <span class="mark-required" title="必填">*</span>
+              <span class="helper-inline">（可多选）</span>
+            </legend>
+            <p class="fieldset-desc">
+              勾选本次需要提炼的世界观、剧情、阵营或人物维度。
+            </p>
+
+            <div class="tag-grid tag-grid-dense">
+              <label class="tag-label"
+                ><input
+                  id="focus-main-characters"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="主要角色人设"
+                />
+                <span>主要角色人设</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-relations"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="角色关系网"
+                />
+                <span>角色关系网</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-worldview"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="世界观设定"
+                />
+                <span>世界观设定</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-outline"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="剧情大纲"
+                />
+                <span>剧情大纲</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-timeline"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="时间线"
+                />
+                <span>时间线</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-factions"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="组织/势力"
+                />
+                <span>组织/势力</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-locations"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="地点地图"
+                />
+                <span>地点地图</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-species"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="物种/妖怪/异类规则"
+                />
+                <span>物种/妖怪/异类规则</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-abilities"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="能力系统"
+                />
+                <span>能力系统</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-folk-religion"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="民俗/宗教/禁忌"
+                />
+                <span>民俗/宗教/禁忌</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-mystery"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="悬疑伏笔"
+                />
+                <span>悬疑伏笔</span></label
+              >
+              <label class="tag-label"
+                ><input
+                  id="focus-style"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="文风分析"
+                />
+                <span>文风分析</span></label
+              >
+              <label class="tag-label tag-label-highlight"
+                ><input
+                  id="focus-st-worldbook"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="SillyTavern 世界书"
+                  checked
+                />
+                <span>SillyTavern 世界书</span></label
+              >
+              <label class="tag-label tag-label-highlight"
+                ><input
+                  id="focus-st-characters"
+                  name="analysisFocus"
+                  data-field="analysisFocus"
+                  type="checkbox"
+                  value="SillyTavern 角色汇总"
+                  checked
+                />
+                <span>SillyTavern 角色汇总</span></label
+              >
+            </div>
+            <p
+              id="error-analysis-focus"
+              data-error-for="analysisFocus"
+              class="input-error-msg"
+            ></p>
+          </fieldset>
+
+          <!-- 目标角色 (主要角色高优先级展开 + 其余折叠) -->
+          <div class="role-section-wrap">
+            <div class="role-header-wrap">
+              <h3 class="fieldset-title">目标角色</h3>
+              <p class="fieldset-desc">
+                规划角色提炼深度，避免在仅出场一次的配角身上过度消耗分析上下文。
+              </p>
+            </div>
+
+            <!-- 主要角色 (默认展开) -->
+            <div class="role-card-block">
+              <div class="role-card-head">
+                <span class="role-type-tag role-type-deep">主要角色</span>
+                <strong class="role-type-label"
+                  >需要深度分析的主要角色
+                  <span class="mark-required" title="必填">*</span></strong
+                >
+                <span class="helper-inline"
+                  >至少 1 项 · 生成完整人设与台词</span
+                >
+              </div>
+              <ul
+                id="list-deep-roles"
+                data-role-group="deep"
+                class="role-entry-list"
+              ></ul>
+              <button
+                type="button"
+                id="btn-add-deep-role"
+                data-role-add="deep"
+                class="btn-subtle-add"
+              >
+                + 添加主要角色
+              </button>
+              <p
+                id="error-deep-roles"
+                data-error-for="deepRoles"
+                class="input-error-msg"
+              ></p>
+            </div>
+
+            <!-- 其余角色分级 (渐进披露折叠) -->
+            <details class="fold-group">
+              <summary class="fold-trigger">
+                其他角色分级（简要记录、暂不分析）
+              </summary>
+              <div class="fold-body">
+                <!-- 简要记录的角色 -->
+                <div class="role-card-block role-card-sub">
+                  <div class="role-card-head">
+                    <span class="role-type-tag role-type-brief">简要角色</span>
+                    <strong class="role-type-label">只需简要记录的角色</strong>
+                    <span class="helper-inline">记录阵营与关键出场关系</span>
+                  </div>
+                  <ul
+                    id="list-brief-roles"
+                    data-role-group="brief"
+                    class="role-entry-list"
+                  ></ul>
+                  <button
+                    type="button"
+                    id="btn-add-brief-role"
+                    data-role-add="brief"
+                    class="btn-subtle-add"
+                  >
+                    + 添加简要角色
+                  </button>
+                  <p
+                    id="error-brief-roles"
+                    data-error-for="briefRoles"
+                    class="input-error-msg"
+                  ></p>
+                </div>
+
+                <!-- 暂不分析/忽略的角色 -->
+                <div class="role-card-block role-card-sub">
+                  <div class="role-card-head">
+                    <span class="role-type-tag role-type-ignored"
+                      >忽略角色</span
+                    >
+                    <strong class="role-type-label">暂不分析/忽略的角色</strong>
+                    <span class="helper-inline">分析时跳过深入挖掘</span>
+                  </div>
+                  <ul
+                    id="list-ignored-roles"
+                    data-role-group="ignored"
+                    class="role-entry-list"
+                  ></ul>
+                  <button
+                    type="button"
+                    id="btn-add-ignored-role"
+                    data-role-add="ignored"
+                    class="btn-subtle-add"
+                  >
+                    + 添加忽略角色
+                  </button>
+                  <p
+                    id="error-ignored-roles"
+                    data-error-for="ignoredRoles"
+                    class="input-error-msg"
+                  ></p>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <!-- 特别注意与高级输出设置 (渐进披露折叠) -->
+          <details class="fold-group">
+            <summary class="fold-trigger">特别注意、输出产物与高级设置</summary>
+            <div class="fold-body">
+              <!-- 特别注意 -->
+              <div class="advanced-block">
+                <h4 class="sub-block-title">特别注意</h4>
+                <p class="fieldset-desc">
+                  为当前作品添加定制化分析要求（如：分卷禁忌、双重身份约定等）。
+                </p>
+                <ul id="list-special-notes" class="note-entry-list"></ul>
+                <button
+                  type="button"
+                  id="btn-add-special-note"
+                  class="btn-subtle-add"
+                >
+                  + 增加一条要求
+                </button>
+              </div>
+
+              <!-- 输出目标 -->
+              <fieldset
+                id="fieldset-outputs"
+                class="option-fieldset advanced-block"
+              >
+                <legend class="sub-block-title">输出目标</legend>
+                <p class="fieldset-desc">
+                  指定最终生成的成果格式（选「是」会自动联动勾选上方分析重点）。
+                </p>
+
+                <div class="output-grid">
+                  <div class="output-cell">
+                    <label for="output-worldbook" class="output-cell-label"
+                      >SillyTavern 世界书</label
+                    >
+                    <select
+                      id="output-worldbook"
+                      name="outputs.worldbook"
+                      data-field="outputs.worldbook"
+                      data-sync-focus="SillyTavern 世界书"
+                      class="select-input"
+                    >
+                      <option value="是" selected>是</option>
+                      <option value="否">否</option>
+                    </select>
+                    <p
+                      id="error-output-worldbook"
+                      data-error-for="outputs.worldbook"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+
+                  <div class="output-cell">
+                    <label
+                      for="output-character-summary"
+                      class="output-cell-label"
+                      >SillyTavern 角色汇总</label
+                    >
+                    <select
+                      id="output-character-summary"
+                      name="outputs.characterSummary"
+                      data-field="outputs.characterSummary"
+                      data-sync-focus="SillyTavern 角色汇总"
+                      class="select-input"
+                    >
+                      <option value="是" selected>是</option>
+                      <option value="否">否</option>
+                    </select>
+                    <p
+                      id="error-output-character-summary"
+                      data-error-for="outputs.characterSummary"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+
+                  <div class="output-cell">
+                    <label for="output-outline" class="output-cell-label"
+                      >剧情大纲</label
+                    >
+                    <select
+                      id="output-outline"
+                      name="outputs.outline"
+                      data-field="outputs.outline"
+                      data-sync-focus="剧情大纲"
+                      class="select-input"
+                    >
+                      <option value="是">是</option>
+                      <option value="否" selected>否</option>
+                    </select>
+                    <p
+                      id="error-output-outline"
+                      data-error-for="outputs.outline"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+
+                  <div class="output-cell">
+                    <label for="output-timeline" class="output-cell-label"
+                      >时间线</label
+                    >
+                    <select
+                      id="output-timeline"
+                      name="outputs.timeline"
+                      data-field="outputs.timeline"
+                      data-sync-focus="时间线"
+                      class="select-input"
+                    >
+                      <option value="是">是</option>
+                      <option value="否" selected>否</option>
+                    </select>
+                    <p
+                      id="error-output-timeline"
+                      data-error-for="outputs.timeline"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+
+                  <div class="output-cell">
+                    <label for="output-relations" class="output-cell-label"
+                      >角色关系网</label
+                    >
+                    <select
+                      id="output-relations"
+                      name="outputs.relations"
+                      data-field="outputs.relations"
+                      data-sync-focus="角色关系网"
+                      class="select-input"
+                    >
+                      <option value="是">是</option>
+                      <option value="否" selected>否</option>
+                    </select>
+                    <p
+                      id="error-output-relations"
+                      data-error-for="outputs.relations"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+
+                  <div class="output-cell">
+                    <label for="output-style" class="output-cell-label"
+                      >文风条目</label
+                    >
+                    <select
+                      id="output-style"
+                      name="outputs.style"
+                      data-field="outputs.style"
+                      data-sync-focus="文风分析"
+                      class="select-input"
+                    >
+                      <option value="是">是</option>
+                      <option value="否" selected>否</option>
+                    </select>
+                    <p
+                      id="error-output-style"
+                      data-error-for="outputs.style"
+                      class="input-error-msg"
+                    ></p>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- 分析粒度 (只读展示) -->
+              <div class="advanced-block">
+                <h4 class="sub-block-title">分析粒度（只读预设）</h4>
+                <p class="fieldset-desc">
+                  以下参数由
+                  <code>scripts/prepare_sources.py</code>
+                  硬编码执行，本工作台仅供查阅。
+                </p>
+                <div class="granularity-strip">
+                  <div class="granularity-item">
+                    <span>默认分块大小</span
+                    ><strong id="granularity-chunk-size"
+                      >12000-15000 中文字</strong
+                    >
+                  </div>
+                  <div class="granularity-item">
+                    <span>超大章节拆分</span
+                    ><strong id="granularity-split-large">是</strong>
+                  </div>
+                  <div class="granularity-item">
+                    <span>保留上下文重叠</span
+                    ><strong id="granularity-keep-overlap">是</strong>
+                  </div>
+                  <div class="granularity-item">
+                    <span>重叠字数</span
+                    ><strong id="granularity-overlap-chars">500</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- 区域 2：原文导入 (可选) -->
+        <section id="section-source" class="flow-section">
+          <div class="section-title-wrap">
+            <h2 class="section-heading">
+              2. 添加小说原文 <span class="helper-inline">（可选）</span>
+            </h2>
+            <p class="section-lead">
+              若小说已手动放入项目的
+              <code>source_raw/</code>
+              文件夹，此处无需操作；如需自动复制，请选择文件或文件夹。
+            </p>
+          </div>
+
+          <div class="upload-dock">
+            <div class="upload-btn-row">
+              <button
+                type="button"
+                id="btn-select-files"
+                class="btn-dock-action"
+              >
+                选择小说文件 (.txt, .md)
+              </button>
+              <button
+                type="button"
+                id="btn-select-folder"
+                class="btn-dock-action"
+              >
+                选择小说文件夹
+              </button>
+              <button
+                type="button"
+                id="btn-clear-imports"
+                class="btn-dock-clear"
+              >
+                清空清单
+              </button>
+            </div>
+            <input
+              id="input-select-files"
+              type="file"
+              accept=".txt,.md,text/plain"
+              multiple
+              hidden
+            />
+            <input
+              id="input-select-folder"
+              type="file"
+              webkitdirectory
+              multiple
+              hidden
+            />
+
+            <div class="upload-status-row">
+              <span id="import-summary" class="upload-summary-text"
+                >待导入 0 个，忽略 0 个，冲突 0 个。</span
+              >
+              <span class="upload-ignored-text"
+                >忽略非文本文件：<strong id="import-ignored-count"
+                  >0</strong
+                ></span
+              >
+            </div>
+          </div>
+
+          <!-- 原文清单 (待导入、冲突、忽略) -->
+          <div class="import-groups-wrap">
+            <div class="import-subgroup">
+              <h4 class="import-group-title">待导入文件清单</h4>
+              <ul id="list-import-pending" class="file-entry-list"></ul>
+            </div>
+            <div class="import-subgroup import-subgroup-danger">
+              <h4 class="import-group-title">路径冲突项（生成前必须处理）</h4>
+              <ul id="list-import-conflicts" class="file-entry-list"></ul>
+            </div>
+            <div class="import-subgroup">
+              <h4 class="import-group-title">已忽略文件</h4>
+              <ul id="list-import-ignored" class="file-entry-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 区域 3：实时预览 (默认折叠，降低权重) -->
+        <section id="section-preview" class="flow-section preview-fold-section">
+          <details class="preview-disclosure">
+            <summary class="preview-trigger">
+              <span>查看生成的 PROJECT_CONFIG.md 与清单预览</span>
+              <span class="preview-sync-hint">实时同步</span>
+            </summary>
+            <div class="preview-expanded-body">
+              <div class="preview-action-bar">
+                <span class="preview-file-label">PROJECT_CONFIG.md 预览</span>
+                <button
+                  type="button"
+                  id="btn-copy-preview"
+                  class="btn-copy-action"
+                >
+                  复制 Markdown
+                </button>
+              </div>
+              <pre id="preview-config" class="code-box" tabindex="0"></pre>
+
+              <h4 class="preview-sub-heading">待导入原文清单</h4>
+              <pre
+                id="preview-import-list"
+                class="code-box code-box-compact"
+                tabindex="0"
+              ></pre>
+            </div>
+          </details>
+        </section>
+
+        <!-- 区域 4：生成任务 (主 CTA 与状态反馈) -->
+        <section
+          id="section-generate"
+          class="flow-section generate-dock-section"
+        >
+          <!-- 校验错误总提示 (控制器写入) -->
+          <div id="validation-summary" class="validation-banner" hidden></div>
+
+          <!-- 主操作按钮 -->
+          <div class="submit-action-dock">
+            <button type="submit" id="btn-generate" class="btn-primary-cta">
+              生成任务
+            </button>
+            <button type="button" id="btn-reset" class="btn-ghost-reset">
+              重置表单
+            </button>
+          </div>
+          <p class="cta-tip">
+            点击生成后，浏览器将弹出目录授权窗口，请选择当前项目根目录。
+          </p>
+
+          <!-- 既有配置覆盖确认面板 -->
+          <div id="confirm-replace-panel" class="replace-alert" hidden>
+            <div class="replace-alert-body">
+              <strong class="replace-alert-title">检测到既有配置</strong>
+              <p id="confirm-replace-message" class="replace-alert-msg">
+                当前项目已有非空 PROJECT_CONFIG.md。确认后会先备份到
+                workspace/index/config-backups/，再写入新配置。
+              </p>
+              <div class="replace-btn-group">
+                <button
+                  type="button"
+                  id="btn-confirm-replace"
+                  class="btn-replace-ok"
+                >
+                  确认替换并备份
+                </button>
+                <button
+                  type="button"
+                  id="btn-cancel-replace"
+                  class="btn-replace-cancel"
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 状态反馈面板 (8种状态精细化展示) -->
+          <div
+            id="status-panel"
+            class="status-box"
+            data-status="idle"
+            data-completion=""
+            data-partial="false"
+          >
+            <div class="status-title-row">
+              <span class="status-dot" aria-hidden="true"></span>
+              <h3 id="status-title" class="status-heading">尚未生成</h3>
+            </div>
+            <p id="status-message" class="status-desc">
+              填写配置后点击“生成任务”。
+            </p>
+            <ul id="status-details" class="status-list"></ul>
+          </div>
+        </section>
+      </form>
+    </div>
+
+    <!-- 模板区域 -->
+    <template id="tpl-role-item">
+      <li data-role-item class="role-item">
+        <input
+          type="text"
+          data-role-name
+          autocomplete="off"
+          placeholder="输入角色姓名或称谓"
+          class="text-input role-name-input"
+        />
+        <div class="role-actions">
+          <button
+            type="button"
+            data-role-action="up"
+            class="btn-item-ctrl"
+            title="上移"
+            aria-label="上移"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            data-role-action="down"
+            class="btn-item-ctrl"
+            title="下移"
+            aria-label="下移"
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            data-role-action="remove"
+            class="btn-item-ctrl btn-item-del"
+            title="删除"
+            aria-label="删除"
+          >
+            ✕
+          </button>
+        </div>
+        <p data-role-error class="role-error-tip" hidden></p>
+      </li>
+    </template>
+
+    <template id="tpl-note-item">
+      <li data-note-item class="note-item">
+        <input
+          type="text"
+          data-note-text
+          autocomplete="off"
+          placeholder="例如：重点梳理主角在前三卷中的心理变化与隐秘身份"
+          class="text-input note-text-input"
+        />
+        <button
+          type="button"
+          data-note-action="remove"
+          class="btn-item-ctrl btn-item-del"
+          title="删除本条要求"
+          aria-label="删除本条要求"
+        >
+          ✕ 删除
+        </button>
+      </li>
+    </template>
+
+    <template id="tpl-import-item">
+      <li data-import-item class="import-item">
+        <span data-import-path class="import-file-path"></span>
+        <span data-import-type class="import-file-ext"></span>
+        <span data-import-size class="import-file-bytes"></span>
+        <span data-import-reason class="import-file-note"></span>
+      </li>
+    </template>
+
+    <noscript>
+      <div class="noscript-box">
+        <strong>需要启用 JavaScript</strong>
+        <p>
+          Novel Lore Digest 配置生成器需要在本地浏览器中运行 JavaScript
+          以进行表单生成与文件写入。
+        </p>
+      </div>
+    </noscript>
+
+    <script src="tools/project-config-generator/project-config-generator-core.js"></script>
+    <script src="tools/project-config-generator/project-config-generator-filesystem.js"></script>
+    <script src="tools/project-config-generator/project-config-generator-controller.js"></script>
+  </body>
+</html>
