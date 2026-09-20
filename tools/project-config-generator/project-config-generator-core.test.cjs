@@ -29,7 +29,6 @@ function minDraft(overrides) {
         characterSummary: "是",
         outline: "否",
         timeline: "否",
-        relations: "否",
         style: "否",
       },
       specialNotes: [],
@@ -56,9 +55,7 @@ function nextStepMissing(markdown) {
     "    missing.append('分析重点')",
     "if not mod._has_nonempty_under_heading(text, '### 需要深度分析的主要角色'):",
     "    missing.append('目标角色清单')",
-    "for label in ['是否生成 SillyTavern 世界书', '是否生成 SillyTavern 角色汇总']:",
-    "    if not mod._value_after_label(text, label):",
-    "        missing.append(label)",
+    "missing.extend(mod._missing_output_labels(text))",
     "print(json.dumps(missing, ensure_ascii=False))",
   ].join("\n");
 
@@ -182,40 +179,72 @@ test("跨组角色冲突会失败并保留角色名", () => {
   assert.deepEqual(conflict.groups, ["deep", "brief"]);
 });
 
-test("输出目标为是时自动加入分析重点，为否时不删除用户选择", () => {
-  const withYes = core.normalizeTaskDraft(
+test("默认输出世界书和角色汇总为是，但不自动加入分析重点", () => {
+  const draft = core.normalizeTaskDraft(minDraft({ analysisFocus: ["主要角色人设"] }));
+  assert.equal(draft.outputs.worldbook, "是");
+  assert.equal(draft.outputs.characterSummary, "是");
+  assert.deepEqual(draft.analysisFocus, ["主要角色人设"]);
+  const labels = core.ANALYSIS_FOCUS_OPTIONS.map((item) => item.label);
+  assert.equal(labels.includes("SillyTavern 世界书"), false);
+  assert.equal(labels.includes("SillyTavern 角色汇总"), false);
+});
+
+test("输出目标从否改是或从是改否都不改变分析重点", () => {
+  const focus = ["主要角色人设", "剧情大纲", "文风分析"];
+  const toYes = core.normalizeTaskDraft(
     minDraft({
-      analysisFocus: ["主要角色人设"],
+      analysisFocus: focus,
       outputs: {
         worldbook: "是",
-        characterSummary: "否",
+        characterSummary: "是",
         outline: "是",
-        timeline: "否",
-        relations: "否",
-        style: "否",
+        timeline: "是",
+        style: "是",
       },
     })
   );
-  assert.deepEqual(withYes.analysisFocus, [
-    "主要角色人设",
-    "SillyTavern 世界书",
-    "剧情大纲",
-  ]);
-
-  const withNo = core.normalizeTaskDraft(
+  const toNo = core.normalizeTaskDraft(
     minDraft({
-      analysisFocus: ["主要角色人设", "剧情大纲", "文风分析"],
+      analysisFocus: focus,
       outputs: {
         worldbook: "否",
         characterSummary: "否",
         outline: "否",
         timeline: "否",
-        relations: "否",
         style: "否",
       },
     })
   );
-  assert.deepEqual(withNo.analysisFocus, ["主要角色人设", "剧情大纲", "文风分析"]);
+  assert.deepEqual(toYes.analysisFocus, focus);
+  assert.deepEqual(toNo.analysisFocus, focus);
+});
+
+test("生成 Markdown 时分析重点和输出目标分别忠实输出", () => {
+  const markdown = core.renderProjectConfig(
+    minDraft({
+      analysisFocus: ["世界观设定", "悬疑伏笔"],
+      outputs: {
+        worldbook: "否",
+        characterSummary: "是",
+        outline: "是",
+        timeline: "否",
+        style: "否",
+      },
+    })
+  );
+  const focusSection = markdown.split("## 输出目标")[0];
+  assert.match(focusSection, /- 已选择：世界观设定、悬疑伏笔/);
+  assert.equal(focusSection.includes("SillyTavern 世界书"), false);
+  assert.equal(focusSection.includes("SillyTavern 角色汇总"), false);
+  assert.match(markdown, /^- 是否生成 SillyTavern 世界书：否$/m);
+  assert.match(markdown, /^- 是否生成 SillyTavern 角色汇总：是$/m);
+  assert.match(markdown, /^- 是否生成剧情大纲：是$/m);
+  assert.equal(/^\- 是否生成关系网：/m.test(markdown), false);
+});
+
+test("输出目标定义彻底移除关系网成品", () => {
+  const keys = core.OUTPUT_TARGET_OPTIONS.map((item) => item.key);
+  assert.deepEqual(keys, ["worldbook", "characterSummary", "outline", "timeline", "style"]);
 });
 
 test("单行字段中的换行、空白和特殊字符不会破坏下一字段", () => {
@@ -262,7 +291,6 @@ test("缺必填项时校验失败", () => {
         characterSummary: "否",
         outline: "否",
         timeline: "否",
-        relations: "否",
         style: "否",
       },
     })
@@ -299,6 +327,13 @@ test("空白模板式配置会被 next_step.py 识别为缺口", () => {
   assert.ok(missing.includes("作者"));
   assert.ok(missing.includes("作品结构类型"));
   assert.ok(missing.includes("目标角色清单"));
+});
+
+test("任一输出目标不是明确是或否时 next_step.py 报缺口", () => {
+  const markdown = core
+    .renderProjectConfig(minDraft())
+    .replace("- 是否生成文风条目：否", "- 是否生成文风条目：");
+  assert.ok(nextStepMissing(markdown).includes("是否生成文风条目"));
 });
 
 test("原文清单忽略非 txt/md，接受大小写扩展名，并发现重复路径", () => {
@@ -340,4 +375,67 @@ test("空白配置与模板比较时视为可直接覆盖", () => {
   assert.equal(core.isBlankProjectConfig("", template), true);
   assert.equal(core.isBlankProjectConfig("\uFEFF# PROJECT_CONFIG\n\n- 作品名：\n", template), true);
   assert.equal(core.isBlankProjectConfig("# PROJECT_CONFIG\n\n- 作品名：已填\n", template), false);
+});
+
+test("角色名单按空格、逗号、顿号、分号和换行拆分", () => {
+  assert.deepEqual(core.parseRoleNames("魏璎珞 皇帝 富察傅恒"), ["魏璎珞", "皇帝", "富察傅恒"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞，皇帝、富察傅恒"), ["魏璎珞", "皇帝", "富察傅恒"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞, 皇帝; 富察傅恒"), ["魏璎珞", "皇帝", "富察傅恒"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞；皇帝"), ["魏璎珞", "皇帝"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞\n皇帝\n富察傅恒"), ["魏璎珞", "皇帝", "富察傅恒"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞\r\n皇帝"), ["魏璎珞", "皇帝"]);
+  assert.deepEqual(core.parseRoleNames("魏璎珞，，皇帝"), ["魏璎珞", "皇帝"]);
+  assert.deepEqual(core.parseRoleNames("  魏璎珞   皇帝  "), ["魏璎珞", "皇帝"]);
+  assert.deepEqual(core.parseRoleNames("Harry Potter, Hermione Granger"), [
+    "Harry Potter",
+    "Hermione Granger",
+  ]);
+});
+
+test("角色名单组内稳定去重，空白名单视为空", () => {
+  assert.deepEqual(core.parseRoleNames("魏璎珞，魏璎珞、 魏璎珞 "), ["魏璎珞"]);
+  assert.deepEqual(core.parseRoleNames("   \n  "), []);
+  const validation = core.validateTaskDraft(minDraft({ deepRoles: "  ，，  " }));
+  assert.equal(validation.ok, false);
+  assert.ok(validation.errors.some((item) => item.field === "deepRoles"));
+});
+
+test("字符串名单会分三组输出到 Markdown", () => {
+  const markdown = core.renderProjectConfig(
+    minDraft({
+      deepRoles: "魏璎珞，皇帝",
+      briefRoles: "皇后",
+      ignoredRoles: "路人甲\n侍卫",
+    })
+  );
+  assert.match(markdown, /### 需要深度分析的主要角色\n- 魏璎珞\n- 皇帝\n/);
+  assert.match(markdown, /### 只需简要记录的角色\n- 皇后\n/);
+  assert.match(markdown, /### 暂不分析\/忽略的角色\n- 路人甲\n- 侍卫\n/);
+});
+
+test("跨组重复角色仍失败并包含角色名", () => {
+  const validation = core.validateTaskDraft(
+    minDraft({
+      deepRoles: "林浅，顾衡",
+      briefRoles: "林浅",
+    })
+  );
+  const conflict = validation.errors.find((item) => item.field === "roleConflict");
+  assert.ok(conflict);
+  assert.equal(conflict.name, "林浅");
+  assert.match(conflict.message, /林浅/);
+});
+
+test("全部输出为否时给出非阻塞提醒条件", () => {
+  assert.equal(
+    core.hasNoFinalOutputs({
+      worldbook: "否",
+      characterSummary: "否",
+      outline: "否",
+      timeline: "否",
+      style: "否",
+    }),
+    true
+  );
+  assert.equal(core.hasNoFinalOutputs(minDraft().outputs), false);
 });

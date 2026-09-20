@@ -27,8 +27,6 @@
     { id: "folk-religion", label: "民俗/宗教/禁忌" },
     { id: "mystery", label: "悬疑伏笔" },
     { id: "style", label: "文风分析" },
-    { id: "st-worldbook", label: "SillyTavern 世界书" },
-    { id: "st-characters", label: "SillyTavern 角色汇总" },
   ];
 
   var OUTPUT_TARGET_OPTIONS = [
@@ -36,42 +34,30 @@
       key: "worldbook",
       id: "output-worldbook",
       label: "是否生成 SillyTavern 世界书",
-      focus: "SillyTavern 世界书",
       defaultValue: "是",
     },
     {
       key: "characterSummary",
       id: "output-character-summary",
       label: "是否生成 SillyTavern 角色汇总",
-      focus: "SillyTavern 角色汇总",
       defaultValue: "是",
     },
     {
       key: "outline",
       id: "output-outline",
       label: "是否生成剧情大纲",
-      focus: "剧情大纲",
       defaultValue: "否",
     },
     {
       key: "timeline",
       id: "output-timeline",
       label: "是否生成时间线",
-      focus: "时间线",
-      defaultValue: "否",
-    },
-    {
-      key: "relations",
-      id: "output-relations",
-      label: "是否生成关系网",
-      focus: "角色关系网",
       defaultValue: "否",
     },
     {
       key: "style",
       id: "output-style",
       label: "是否生成文风条目",
-      focus: "文风分析",
       defaultValue: "否",
     },
   ];
@@ -185,6 +171,31 @@
     return uniqueKeepOrder(items);
   }
 
+  function hasExplicitRoleSeparators(text) {
+    return /[,，、;；\r\n]/.test(asString(text));
+  }
+
+  function parseRoleNames(value) {
+    if (Array.isArray(value)) {
+      return normalizeNameList(value);
+    }
+    var text = asString(value);
+    if (!text.trim()) {
+      return [];
+    }
+    var parts = hasExplicitRoleSeparators(text)
+      ? text.split(/[,，、;；\r\n]+/)
+      : text.split(/[ \t]+/);
+    var items = [];
+    for (var i = 0; i < parts.length; i += 1) {
+      var item = asString(parts[i]).replace(/[ \t]+/g, " ").trim();
+      if (item) {
+        items.push(item);
+      }
+    }
+    return uniqueKeepOrder(items);
+  }
+
   function toYesNo(value, fallback) {
     if (value === true) {
       return "是";
@@ -276,17 +287,6 @@
     return uniqueKeepOrder(result);
   }
 
-  function syncAnalysisFocus(analysisFocus, outputs) {
-    var merged = analysisFocus.slice();
-    for (var i = 0; i < OUTPUT_TARGET_OPTIONS.length; i += 1) {
-      var option = OUTPUT_TARGET_OPTIONS[i];
-      if (outputs[option.key] === "是") {
-        merged.push(option.focus);
-      }
-    }
-    return uniqueKeepOrder(filterKnown(merged, knownFocusLabels()));
-  }
-
   function normalizeOutputs(rawOutputs) {
     var source = rawOutputs && typeof rawOutputs === "object" ? rawOutputs : {};
     var outputs = {};
@@ -295,6 +295,16 @@
       outputs[option.key] = toYesNo(source[option.key], option.defaultValue);
     }
     return outputs;
+  }
+
+  function hasNoFinalOutputs(outputs) {
+    var normalized = normalizeOutputs(outputs);
+    for (var i = 0; i < OUTPUT_TARGET_OPTIONS.length; i += 1) {
+      if (normalized[OUTPUT_TARGET_OPTIONS[i].key] === "是") {
+        return false;
+      }
+    }
+    return true;
   }
 
   function normalizeTaskDraft(rawDraft) {
@@ -312,10 +322,10 @@
       analysisDate: analysisDate,
       structureTypes: structureTypes,
       otherStructure: otherStructure,
-      analysisFocus: syncAnalysisFocus(asList(raw.analysisFocus), outputs),
-      deepRoles: normalizeNameList(raw.deepRoles),
-      briefRoles: normalizeNameList(raw.briefRoles),
-      ignoredRoles: normalizeNameList(raw.ignoredRoles),
+      analysisFocus: uniqueKeepOrder(filterKnown(asList(raw.analysisFocus), knownFocusLabels())),
+      deepRoles: parseRoleNames(raw.deepRoles),
+      briefRoles: parseRoleNames(raw.briefRoles),
+      ignoredRoles: parseRoleNames(raw.ignoredRoles),
       outputs: outputs,
       specialNotes: normalizeNameList(raw.specialNotes),
       granularity: {
@@ -717,7 +727,8 @@
     detectBrowserCapabilities: detectBrowserCapabilities,
     normalizeConfigText: normalizeConfigText,
     isBlankProjectConfig: isBlankProjectConfig,
-    syncAnalysisFocus: syncAnalysisFocus,
+    parseRoleNames: parseRoleNames,
+    hasNoFinalOutputs: hasNoFinalOutputs,
   };
 
   if (typeof module === "object" && module.exports) {

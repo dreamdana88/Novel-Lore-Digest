@@ -445,28 +445,6 @@
                 />
                 <span>文风分析</span></label
               >
-              <label class="tag-label tag-label-highlight"
-                ><input
-                  id="focus-st-worldbook"
-                  name="analysisFocus"
-                  data-field="analysisFocus"
-                  type="checkbox"
-                  value="SillyTavern 世界书"
-                  checked
-                />
-                <span>SillyTavern 世界书</span></label
-              >
-              <label class="tag-label tag-label-highlight"
-                ><input
-                  id="focus-st-characters"
-                  name="analysisFocus"
-                  data-field="analysisFocus"
-                  type="checkbox"
-                  value="SillyTavern 角色汇总"
-                  checked
-                />
-                <span>SillyTavern 角色汇总</span></label
-              >
             </div>
             <p
               id="error-analysis-focus"
@@ -496,19 +474,18 @@
                   >至少 1 项 · 生成完整人设与台词</span
                 >
               </div>
-              <ul
-                id="list-deep-roles"
-                data-role-group="deep"
-                class="role-entry-list"
-              ></ul>
-              <button
-                type="button"
-                id="btn-add-deep-role"
-                data-role-add="deep"
-                class="btn-subtle-add"
-              >
-                + 添加主要角色
-              </button>
+              <label class="sr-only" for="field-deep-roles">需要深度分析的主要角色</label>
+              <textarea
+                id="field-deep-roles"
+                name="deepRoles"
+                data-field="deepRoles"
+                class="text-input role-batch-input"
+                rows="2"
+                placeholder="魏璎珞，皇帝，富察傅恒"
+              ></textarea>
+              <p class="helper-inline role-batch-hint">
+                多个角色可用空格、逗号、顿号、分号或换行分隔。
+              </p>
               <p
                 id="error-deep-roles"
                 data-error-for="deepRoles"
@@ -529,19 +506,18 @@
                     <strong class="role-type-label">只需简要记录的角色</strong>
                     <span class="helper-inline">记录阵营与关键出场关系</span>
                   </div>
-                  <ul
-                    id="list-brief-roles"
-                    data-role-group="brief"
-                    class="role-entry-list"
-                  ></ul>
-                  <button
-                    type="button"
-                    id="btn-add-brief-role"
-                    data-role-add="brief"
-                    class="btn-subtle-add"
-                  >
-                    + 添加简要角色
-                  </button>
+                  <label class="sr-only" for="field-brief-roles">只需简要记录的角色</label>
+                  <textarea
+                    id="field-brief-roles"
+                    name="briefRoles"
+                    data-field="briefRoles"
+                    class="text-input role-batch-input"
+                    rows="2"
+                    placeholder="皇后，尔康"
+                  ></textarea>
+                  <p class="helper-inline role-batch-hint">
+                    多个角色可用空格、逗号、顿号、分号或换行分隔。
+                  </p>
                   <p
                     id="error-brief-roles"
                     data-error-for="briefRoles"
@@ -558,19 +534,18 @@
                     <strong class="role-type-label">暂不分析/忽略的角色</strong>
                     <span class="helper-inline">分析时跳过深入挖掘</span>
                   </div>
-                  <ul
-                    id="list-ignored-roles"
-                    data-role-group="ignored"
-                    class="role-entry-list"
-                  ></ul>
-                  <button
-                    type="button"
-                    id="btn-add-ignored-role"
-                    data-role-add="ignored"
-                    class="btn-subtle-add"
-                  >
-                    + 添加忽略角色
-                  </button>
+                  <label class="sr-only" for="field-ignored-roles">暂不分析/忽略的角色</label>
+                  <textarea
+                    id="field-ignored-roles"
+                    name="ignoredRoles"
+                    data-field="ignoredRoles"
+                    class="text-input role-batch-input"
+                    rows="2"
+                    placeholder="路人甲，侍卫"
+                  ></textarea>
+                  <p class="helper-inline role-batch-hint">
+                    多个角色可用空格、逗号、顿号、分号或换行分隔。
+                  </p>
                   <p
                     id="error-ignored-roles"
                     data-error-for="ignoredRoles"
@@ -606,9 +581,9 @@
                 id="fieldset-outputs"
                 class="option-fieldset advanced-block"
               >
-                <legend class="sub-block-title">输出目标</legend>
+                <legend class="sub-block-title">最终成品</legend>
                 <p class="fieldset-desc">
-                  指定最终生成的成果格式（选「是」会自动联动勾选上方分析重点）。
+                  指定最后要带走的成品。这里不会改动上方的分析重点。
                 </p>
 
                 <div class="output-grid">
@@ -620,7 +595,6 @@
                       id="output-worldbook"
                       name="outputs.worldbook"
                       data-field="outputs.worldbook"
-                      data-sync-focus="SillyTavern 世界书"
                       class="select-input"
                     >
                       <option value="是" selected>是</option>
@@ -643,7 +617,6 @@
                       id="output-character-summary"
                       name="outputs.characterSummary"
                       data-field="outputs.characterSummary"
-                      data-sync-focus="SillyTavern 角色汇总"
                       class="select-input"
                     >
                       <option value="是" selected>是</option>
@@ -664,7 +637,6 @@
                       id="output-outline"
                       name="outputs.outline"
                       data-field="outputs.outline"
-                      data-sync-focus="剧情大纲"
                       class="select-input"
                     >
                       <option value="是">是</option>
@@ -685,7 +657,6 @@
                       id="output-timeline"
                       name="outputs.timeline"
                       data-field="outputs.timeline"
-                      data-sync-focus="时间线"
                       class="select-input"
                     >
                       <option value="是">是</option>
@@ -699,27 +670,6 @@
                   </div>
 
                   <div class="output-cell">
-                    <label for="output-relations" class="output-cell-label"
-                      >角色关系网</label
-                    >
-                    <select
-                      id="output-relations"
-                      name="outputs.relations"
-                      data-field="outputs.relations"
-                      data-sync-focus="角色关系网"
-                      class="select-input"
-                    >
-                      <option value="是">是</option>
-                      <option value="否" selected>否</option>
-                    </select>
-                    <p
-                      id="error-output-relations"
-                      data-error-for="outputs.relations"
-                      class="input-error-msg"
-                    ></p>
-                  </div>
-
-                  <div class="output-cell">
                     <label for="output-style" class="output-cell-label"
                       >文风条目</label
                     >
@@ -727,7 +677,6 @@
                       id="output-style"
                       name="outputs.style"
                       data-field="outputs.style"
-                      data-sync-focus="文风分析"
                       class="select-input"
                     >
                       <option value="是">是</option>
@@ -740,6 +689,9 @@
                     ></p>
                   </div>
                 </div>
+                <p id="output-empty-hint" class="output-empty-hint" hidden>
+                  未选择最终输出，Agent 将只完成基础整理。
+                </p>
               </fieldset>
 
               <!-- 分析粒度 (只读展示) -->
@@ -956,48 +908,6 @@
     </div>
 
     <!-- 模板区域 -->
-    <template id="tpl-role-item">
-      <li data-role-item class="role-item">
-        <input
-          type="text"
-          data-role-name
-          autocomplete="off"
-          placeholder="输入角色姓名或称谓"
-          class="text-input role-name-input"
-        />
-        <div class="role-actions">
-          <button
-            type="button"
-            data-role-action="up"
-            class="btn-item-ctrl"
-            title="上移"
-            aria-label="上移"
-          >
-            ↑
-          </button>
-          <button
-            type="button"
-            data-role-action="down"
-            class="btn-item-ctrl"
-            title="下移"
-            aria-label="下移"
-          >
-            ↓
-          </button>
-          <button
-            type="button"
-            data-role-action="remove"
-            class="btn-item-ctrl btn-item-del"
-            title="删除"
-            aria-label="删除"
-          >
-            ✕
-          </button>
-        </div>
-        <p data-role-error class="role-error-tip" hidden></p>
-      </li>
-    </template>
-
     <template id="tpl-note-item">
       <li data-note-item class="note-item">
         <input

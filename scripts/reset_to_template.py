@@ -39,7 +39,6 @@ TEMPLATE_SKELETON = {
     ROOT / "outputs": (
         Path("."),
         Path("SillyTavern角色汇总"),
-        Path("star-forge-import"),
     ),
 }
 

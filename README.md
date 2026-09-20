@@ -6,7 +6,7 @@ Novel-Lore-Digest 是一个可复用的长篇小说设定分析工作流框架�
 
 1. 填写 `PROJECT_CONFIG.md`：作品类型、分析重点、目标角色和输出目标。
 2. 把小说 `.txt` 或 `.md` 放进 `source_raw/`；该目录是只读原文备份。
-3. 在 Codex 或 Claude Code 中说：`启动 Novel Lore Digest`。
+3. 对 agent 说：`启动 Novel Lore Digest`。
 4. 此后按提示说：`继续下一步`。中断后也使用同一句，脚本会从 `workspace/index/下一步.md` 恢复导航。
 
 最终可导入 SillyTavern 的作品卡位于：
@@ -14,20 +14,6 @@ Novel-Lore-Digest 是一个可复用的长篇小说设定分析工作流框架�
 ```text
 outputs/sillytavern-story-card/{作品名}.json
 ```
-
-## 支持的作品类型
-
-- 单元故事型
-- 连续长篇型
-- 系列长篇型
-- 案件单元型
-- 冒险篇章型
-- 群像史诗型
-- 奇幻世界观型
-- 都市奇幻型
-- 民俗悬疑型
-- 灵异调查型
-- 其他混合结构
 
 ## 工作流主要阶段
 
@@ -144,26 +130,6 @@ python scripts/export_story_card_for_sillytavern.py
 outputs/sillytavern-story-card/导出检查报告.md
 ```
 
-## 世界书快捷导入（旧路径）
+## 世界书条目与导出检查
 
-`outputs/SillyTavern世界书.md` 现在分为两部分：
-
-- `## 可导入条目块`：只放星辰工坊世界书管理器可扫描的 XML 条目。
-- `## 生成说明与检查`：放生成说明、激活链检查和待核查问题。
-
-导出纯导入版：
-
-```powershell
-python scripts/export_worldbook_for_starforge.py
-```
-
-输出位置：
-
-```txt
-outputs/star-forge-import/世界书导入块.md
-outputs/star-forge-import/世界书导入检查.md
-```
-
-此路径仅在需要继续走星辰工坊世界书管理器时使用。推荐流程：复制 `世界书导入块.md` 内容到 SillyTavern 聊天，打开星辰工坊世界书管理器，扫描最近消息并导入目标世界书。
-
-
+世界书保留 `## 可导入条目块` 与 `## 生成说明与检查` 两部分。作品卡导出器读取 XML 条目，将世界书和角色汇总统一打包，并把多层关键词链与悬空条目检查写入导出检查报告。

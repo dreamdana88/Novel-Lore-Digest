@@ -19,6 +19,7 @@ EXPORT_DIR = ROOT / "outputs" / "sillytavern-story-card"
 REPORT = EXPORT_DIR / "导出检查报告.md"
 
 REQUIRED_HEADER_FIELDS = ["条目名称", "关键词", "插入位置", "插入顺序", "激活策略"]
+RECURSION_FIELDS = {"不可递归": "exclude_recursion", "防止进一步递归": "prevent_recursion"}
 PLACEHOLDER_PATTERNS = ["【需自行补充】", "【待核查】", "【待回填语料】"]
 
 
@@ -134,7 +135,7 @@ def content_without_header(inner: str) -> str:
     lines = []
     for line in inner.splitlines():
         stripped = line.strip()
-        is_header = any(re.match(rf"^#?\s*{re.escape(field)}\s*[:：]", stripped) for field in REQUIRED_HEADER_FIELDS)
+        is_header = any(re.match(rf"^#?\s*{re.escape(field)}\s*[:：]", stripped) for field in [*REQUIRED_HEADER_FIELDS, *RECURSION_FIELDS])
         if not is_header:
             lines.append(line)
     return "\n".join(lines).strip()
@@ -167,6 +168,12 @@ def block_to_entry(block: XmlBlock, entry_id: int) -> EntryResult:
     position_raw = line_value(block.inner_text, "插入位置")
     order_raw = line_value(block.inner_text, "插入顺序")
     strategy = line_value(block.inner_text, "激活策略")
+    extensions = {}
+    for label, key in RECURSION_FIELDS.items():
+        value = line_value(block.inner_text, label) or "是"
+        if value not in ("是", "否"):
+            raise ValueError(f"`{name}` 的 `{label}` 必须为“是”或“否”：{value}")
+        extensions[key] = value == "是"
 
     content = export_content_with_xml_tag(block)
 
@@ -189,7 +196,7 @@ def block_to_entry(block: XmlBlock, entry_id: int) -> EntryResult:
         "insertion_order": parse_order(order_raw),
         "enabled": True,
         "position": parse_position(position_raw),
-        "extensions": {},
+        "extensions": extensions,
     }
     return EntryResult(entry, warnings)
 
@@ -214,6 +221,39 @@ def read_character_blocks() -> tuple[list[XmlBlock], str]:
         if blocks:
             return blocks, character_dir.relative_to(ROOT).as_posix()
     return blocks, CHARACTER_DIR_CANDIDATES[0].relative_to(ROOT).as_posix()
+
+
+def check_keyword_chains(blocks: list[XmlBlock]) -> list[str]:
+    """检查正文关键词链能否追溯到蓝灯，不模拟运行时递归开关。"""
+    reachable_contents: list[str] = []
+    pending: list[tuple[str, list[str], str]] = []
+    for block in blocks:
+        strategy = line_value(block.inner_text, "激活策略")
+        content = content_after_label(block.inner_text) or content_without_header(block.inner_text)
+        if "常驻" in strategy:
+            reachable_contents.append(content)
+        elif "关键词" in strategy:
+            pending.append((
+                line_value(block.inner_text, "条目名称") or block.tag,
+                split_keywords(line_value(block.inner_text, "关键词")),
+                content,
+            ))
+
+    while pending:
+        linked = [entry for entry in pending if any(
+            keyword in parent_content
+            for keyword in entry[1]
+            for parent_content in reachable_contents
+        )]
+        if not linked:
+            break
+        reachable_contents.extend(content for _, _, content in linked)
+        pending = [entry for entry in pending if entry not in linked]
+
+    return [
+        f"绿灯条目 `{name}` 无法通过母条目正文关键词链追溯到常驻蓝灯，可能悬空：{', '.join(keywords) or '无关键词'}"
+        for name, keywords, _ in pending
+    ]
 
 
 def build_card(title: str, entries: list[dict]) -> dict:
@@ -314,7 +354,7 @@ def main() -> None:
     if not character_blocks:
         raise SystemExit("未找到角色设定 XML 条目块。")
 
-    warnings: list[str] = []
+    warnings = check_keyword_chains([*world_blocks, *character_blocks])
     entries: list[dict] = []
     for entry_id, block in enumerate([*world_blocks, *character_blocks], start=1):
         result = block_to_entry(block, entry_id)

@@ -1,6 +1,6 @@
 ---
 name: novel-lore-digest
-description: "Use for the Novel Lore Digest project — a pipeline for extracting structured lore from long novels and story collections. Triggers broadly: when users want lore artifacts (角色卡, 世界书, 关系网, 时间线) derived from analyzing existing fiction; when source files like source_raw/ or PROJECT_CONFIG.md are mentioned; when workflow commands appear (启动 Novel Lore Digest, 试跑三篇, 继续下一步, 同步到酒馆, 导出世界书导入块); or when a user asks how to begin turning a novel into SillyTavern content. Not for: writing new fiction, building SillyTavern web UIs, or file format conversion."
+description: "Use for the Novel Lore Digest project — a pipeline for extracting structured lore from long novels and story collections. Triggers broadly: when users want lore artifacts (角色卡, 世界书, 关系网, 时间线) derived from analyzing existing fiction; when source files like source_raw/ or PROJECT_CONFIG.md are mentioned; when workflow commands appear (启动 Novel Lore Digest, 试跑三篇, 继续下一步, 同步到酒馆, 导出作品角色卡); or when a user asks how to begin turning a novel into SillyTavern content. Not for: writing new fiction, building SillyTavern web UIs, or file format conversion."
 ---
 
 # Novel Lore Digest

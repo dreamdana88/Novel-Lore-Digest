@@ -499,10 +499,6 @@ body {
   font-weight: 600;
 }
 
-.tag-label-highlight {
-  border-left: 3px solid var(--primary);
-}
-
 /* “其他”题材说明行 */
 .custom-structure-row {
   margin-top: 0.75rem;
@@ -586,28 +582,33 @@ body {
   color: var(--text-title);
 }
 
-.role-entry-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 0.65rem;
+.role-batch-input {
+  width: 100%;
+  min-height: 4.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
 }
 
-.role-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
+.role-batch-hint {
+  display: block;
+  margin: 0.4rem 0 0;
 }
 
-.role-name-input {
-  flex: 1;
-  min-width: 140px;
+.role-batch-input[data-conflict="true"],
+.role-batch-input[data-invalid="true"] {
+  border-color: var(--danger);
+  background: var(--danger-surface);
 }
 
-.role-actions {
-  display: inline-flex;
-  gap: 0.25rem;
+.output-empty-hint {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.8rem;
+  background: var(--slate-surface);
+  border: 1px solid var(--slate-border);
+  color: var(--slate);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
 }
 
 .btn-item-ctrl {
@@ -632,25 +633,6 @@ body {
   background: var(--danger-surface);
   border-color: var(--danger-border);
   color: var(--danger-text);
-}
-
-.role-error-tip {
-  width: 100%;
-  font-size: 0.85rem;
-  color: var(--danger-text);
-  margin: 0.2rem 0 0;
-}
-
-[data-role-item][data-conflict="true"] {
-  background: var(--danger-surface);
-  border: 1px dashed var(--danger-border);
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-sm);
-}
-
-[data-role-item][data-conflict="true"] .role-name-input {
-  border-color: var(--danger);
-  background: #ffffff;
 }
 
 /* 按钮：柔和增加条目 */

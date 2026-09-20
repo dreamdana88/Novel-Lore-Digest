@@ -9,7 +9,7 @@
 - `workspace/index/`：文本索引、分析计划、进度、角色出场表、下一步。
 - `workspace/notes/`：按 story/chapter/arc 生成的局部笔记。
 - `workspace/entities/`：全局归并后的角色、地点、组织、物种、物品、规则、关系和时间线。
-- `outputs/`：用户最终复查、导入或带走的结果；旧版星辰工坊导入块位于 `outputs/star-forge-import/`。
+- `outputs/`：用户最终复查、导入或带走的结果。
 
 ## 核心原则
 
@@ -35,7 +35,7 @@
 
 执行前先读 workflow.md，按其顺序推进。**不要在本文件重复维护阶段细节，避免漂移。**
 
-阶段骨架（概览）：读配置 → 准备文本 → 分析计划 → 局部笔记（含对话台词） → 角色出场表 → 实体归并 → 剧情/世界观汇总 → SillyTavern 世界书 + 角色汇总（主角 `<Character_>` / 配角 `<NPC_>`） → 角色汇总归并核查 → 导出一张作品名 SillyTavern 作品角色卡 JSON（内容全部内嵌在 `character_book`） → 一致性检查。
+阶段骨架（概览）：读配置 → 准备文本 → 分析计划 → 局部笔记（含对话台词） → 角色出场表 → 实体归并（含角色关系）→ 按 `PROJECT_CONFIG.md` 输出目标生成用户成品（剧情大纲、时间线、文风条目、SillyTavern 世界书/角色汇总）→ 仅当世界书和角色汇总都选择「是」时导出作品角色卡 JSON → 一致性检查。未选择的最终成品不是完成门槛。
 
 ## 懒人模式
 
@@ -57,9 +57,8 @@
 
 当用户说：
 - “同步到酒馆”
-- “导出世界书导入块”
-- “准备星辰工坊导入”
+- “导出作品角色卡”
 
-你必须读取 prompts/同步到酒馆.md。默认优先运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `outputs/sillytavern-story-card/{作品名}.json`；只有用户明确要求“导出世界书导入块”或“准备星辰工坊导入”时，才运行 `python scripts/export_worldbook_for_starforge.py`。不要直接修改 SillyTavern 存档或世界书数据库。
+你必须读取 prompts/同步到酒馆.md。运行 `python scripts/export_story_card_for_sillytavern.py`，生成 `outputs/sillytavern-story-card/{作品名}.json`。不要直接修改 SillyTavern 存档或世界书数据库。
 
 

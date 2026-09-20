@@ -5,7 +5,7 @@
   {"query": "按流程推进，角色出场表已经做完了，接着归并世界观", "should_trigger": true},
   {"query": "试跑三篇看看局部笔记模板顺不顺手", "should_trigger": true},
   {"query": "这部单元故事型小说主要角色有七八个，我想要一份关系网和时间线，方便后面捏角色卡", "should_trigger": true},
-  {"query": "同步到酒馆，导出世界书导入块准备星辰工坊导入", "should_trigger": true},
+  {"query": "同步到酒馆，导出可导入 SillyTavern 的作品角色卡", "should_trigger": true},
   {"query": "我在做一部民俗悬疑小说的设定整理，想把原著里那些妖怪规则、禁忌归并成可复用的世界观条目，标好出处", "should_trigger": true},
   {"query": "那个小说设定整理的流程 接着跑下一阶段呗", "should_trigger": true},
   {"query": "source_raw 里放好了一套案件单元小说，帮我逐篇拆局部笔记再归并主要角色", "should_trigger": true},

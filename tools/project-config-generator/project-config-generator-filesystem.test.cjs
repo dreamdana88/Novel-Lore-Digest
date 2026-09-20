@@ -33,7 +33,6 @@ const FILLED_CONFIG = core.renderProjectConfig({
     characterSummary: "是",
     outline: "否",
     timeline: "否",
-    relations: "否",
     style: "否",
   },
 });
@@ -52,7 +51,6 @@ const NEW_CONFIG = core.renderProjectConfig({
     characterSummary: "是",
     outline: "否",
     timeline: "否",
-    relations: "否",
     style: "否",
   },
 });

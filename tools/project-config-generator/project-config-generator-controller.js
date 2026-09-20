@@ -274,19 +274,6 @@
       return tpl.content.firstElementChild.cloneNode(true);
     }
 
-    function addRoleRow(group, value) {
-      var list = form.querySelector('[data-role-group="' + group + '"]');
-      var row = cloneTemplate("tpl-role-item");
-      if (!list || !row) {
-        return;
-      }
-      var input = row.querySelector("[data-role-name]");
-      if (input) {
-        input.value = value || "";
-      }
-      list.appendChild(row);
-    }
-
     function addNoteRow(value) {
       var list = $("list-special-notes");
       var row = cloneTemplate("tpl-note-item");
@@ -323,15 +310,14 @@
         structureTypes: checkedValues(form, "structureTypes"),
         otherStructure: $("field-other-structure") ? $("field-other-structure").value : "",
         analysisFocus: checkedValues(form, "analysisFocus"),
-        deepRoles: listValues($("list-deep-roles"), "[data-role-name]"),
-        briefRoles: listValues($("list-brief-roles"), "[data-role-name]"),
-        ignoredRoles: listValues($("list-ignored-roles"), "[data-role-name]"),
+        deepRoles: $("field-deep-roles") ? $("field-deep-roles").value : "",
+        briefRoles: $("field-brief-roles") ? $("field-brief-roles").value : "",
+        ignoredRoles: $("field-ignored-roles") ? $("field-ignored-roles").value : "",
         outputs: {
           worldbook: $("output-worldbook") ? $("output-worldbook").value : "是",
           characterSummary: $("output-character-summary") ? $("output-character-summary").value : "是",
           outline: $("output-outline") ? $("output-outline").value : "否",
           timeline: $("output-timeline") ? $("output-timeline").value : "否",
-          relations: $("output-relations") ? $("output-relations").value : "否",
           style: $("output-style") ? $("output-style").value : "否",
         },
         specialNotes: listValues($("list-special-notes"), "[data-note-text]"),
@@ -356,18 +342,11 @@
       if ($("output-character-summary")) $("output-character-summary").value = normalized.outputs.characterSummary;
       if ($("output-outline")) $("output-outline").value = normalized.outputs.outline;
       if ($("output-timeline")) $("output-timeline").value = normalized.outputs.timeline;
-      if ($("output-relations")) $("output-relations").value = normalized.outputs.relations;
       if ($("output-style")) $("output-style").value = normalized.outputs.style;
       setCheckedValues(form, "analysisFocus", normalized.analysisFocus);
-      fillList($("list-deep-roles"), normalized.deepRoles, function (value) {
-        addRoleRow("deep", value);
-      });
-      fillList($("list-brief-roles"), normalized.briefRoles, function (value) {
-        addRoleRow("brief", value);
-      });
-      fillList($("list-ignored-roles"), normalized.ignoredRoles, function (value) {
-        addRoleRow("ignored", value);
-      });
+      if ($("field-deep-roles")) $("field-deep-roles").value = (normalized.deepRoles || []).join("，");
+      if ($("field-brief-roles")) $("field-brief-roles").value = (normalized.briefRoles || []).join("，");
+      if ($("field-ignored-roles")) $("field-ignored-roles").value = (normalized.ignoredRoles || []).join("，");
       fillList($("list-special-notes"), normalized.specialNotes, addNoteRow);
       text($("granularity-chunk-size"), api.GRANULARITY_DEFAULTS.chunkSize);
       text($("granularity-split-large"), api.GRANULARITY_DEFAULTS.splitLargeChapters);
@@ -436,38 +415,35 @@
       for (var i = 0; i < nodes.length; i += 1) {
         text(nodes[i], "");
       }
-      var fields = form.querySelectorAll("[data-field], [data-role-name]");
+      var fields = form.querySelectorAll("[data-field]");
       for (var j = 0; j < fields.length; j += 1) {
         setInvalid(fields[j], false);
         fields[j].removeAttribute("data-conflict");
       }
-      var roleErrors = form.querySelectorAll("[data-role-error]");
-      for (var k = 0; k < roleErrors.length; k += 1) {
-        text(roleErrors[k], "");
-        setHidden(roleErrors[k], true);
-        if (roleErrors[k].parentNode) {
-          roleErrors[k].parentNode.removeAttribute("data-conflict");
-        }
-      }
     }
 
     function showRoleConflicts(errors) {
-      var items = form.querySelectorAll("[data-role-item]");
+      var fieldByGroup = {
+        deep: $("field-deep-roles"),
+        brief: $("field-brief-roles"),
+        ignored: $("field-ignored-roles"),
+      };
       for (var i = 0; i < errors.length; i += 1) {
         var error = errors[i];
-        if (error.field !== "roleConflict") {
+        if (error.field !== "roleConflict" || !error.groups) {
           continue;
         }
-        for (var j = 0; j < items.length; j += 1) {
-          var input = items[j].querySelector("[data-role-name]");
-          if (!input || String(input.value).trim() !== error.name) {
+        for (var j = 0; j < error.groups.length; j += 1) {
+          var field = fieldByGroup[error.groups[j]];
+          if (!field) {
             continue;
           }
-          items[j].setAttribute("data-conflict", "true");
-          setInvalid(input, true);
-          var box = items[j].querySelector("[data-role-error]");
-          text(box, error.message);
-          setHidden(box, false);
+          field.setAttribute("data-conflict", "true");
+          setInvalid(field, true);
+          var box = form.querySelector('[data-error-for="' + error.groups[j] + 'Roles"]');
+          if (box) {
+            text(box, error.message);
+          }
         }
       }
     }
@@ -505,6 +481,7 @@
       var markdown = api.renderProjectConfig(draft);
       text($("preview-config"), markdown);
       var plan = renderImportState();
+      setHidden($("output-empty-hint"), !api.hasNoFinalOutputs(draft.outputs));
       emit(app, "nld:draft-change", { draft: draft, markdown: markdown });
       return { draft: draft, markdown: markdown, plan: plan };
     }
@@ -591,20 +568,6 @@
       });
     }
 
-    function syncOutputFocus(selectEl) {
-      if (!selectEl || selectEl.value !== "是") {
-        return;
-      }
-      var focusValue = selectEl.getAttribute("data-sync-focus");
-      if (!focusValue) {
-        return;
-      }
-      var box = form.querySelector('[data-field="analysisFocus"][value="' + focusValue + '"]');
-      if (box) {
-        box.checked = true;
-      }
-    }
-
     async function handleGenerate(event) {
       if (event) {
         event.preventDefault();
@@ -677,36 +640,6 @@
       emit(app, "nld:generate-complete", result);
     }
 
-    function onRoleClick(event) {
-      var actionBtn = event.target.closest("[data-role-action]");
-      var addBtn = event.target.closest("[data-role-add]");
-      if (addBtn) {
-        addRoleRow(addBtn.getAttribute("data-role-add"), "");
-        refreshPreview();
-        return;
-      }
-      if (!actionBtn) {
-        return;
-      }
-      var row = actionBtn.closest("[data-role-item]");
-      if (!row) {
-        return;
-      }
-      var action = actionBtn.getAttribute("data-role-action");
-      if (action === "remove") {
-        var group = row.parentNode;
-        row.parentNode.removeChild(row);
-        if (group && !group.querySelector("[data-role-item]")) {
-          addRoleRow(group.getAttribute("data-role-group"), "");
-        }
-      } else if (action === "up" && row.previousElementSibling) {
-        row.parentNode.insertBefore(row, row.previousElementSibling);
-      } else if (action === "down" && row.nextElementSibling) {
-        row.parentNode.insertBefore(row.nextElementSibling, row);
-      }
-      refreshPreview();
-    }
-
     var capabilities = api.detectBrowserCapabilities(global);
     text($("nld-compat-message"), capabilities.message);
     setHidden($("nld-compat-banner"), capabilities.supported);
@@ -720,14 +653,10 @@
     form.addEventListener("input", function () {
       refreshPreview();
     });
-    form.addEventListener("change", function (event) {
-      if (event.target && event.target.getAttribute("data-sync-focus")) {
-        syncOutputFocus(event.target);
-      }
+    form.addEventListener("change", function () {
       refreshPreview();
     });
     form.addEventListener("submit", handleGenerate);
-    form.addEventListener("click", onRoleClick);
 
     $("btn-add-special-note") &&
       $("btn-add-special-note").addEventListener("click", function () {

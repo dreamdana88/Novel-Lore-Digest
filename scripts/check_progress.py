@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from next_step import planned_arc_note_paths
+
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE = ROOT / "workspace"
@@ -12,6 +14,7 @@ NOTE_DIRS = [
     WORKSPACE / "notes" / "arc-notes",
 ]
 OUTPUT = WORKSPACE / "index" / "分析进度.md"
+ANALYSIS_PLAN = WORKSPACE / "index" / "分析计划.md"
 
 
 def note_candidates(source_file: Path) -> set[str]:
@@ -42,6 +45,15 @@ def main() -> None:
     missing: list[Path] = []
     review: list[str] = []
 
+    plan_text = ANALYSIS_PLAN.read_text(encoding="utf-8", errors="ignore") if ANALYSIS_PLAN.exists() else ""
+    planned_arc_notes = planned_arc_note_paths(plan_text)
+    completed_arc_notes = [
+        path
+        for path in planned_arc_notes
+        if path.exists() and path.read_text(encoding="utf-8", errors="ignore").strip()
+    ]
+    missing_arc_notes = [path for path in planned_arc_notes if path not in completed_arc_notes]
+
     for source_file in source_files:
         candidates = note_candidates(source_file)
         matched = [note_name_map[name] for name in candidates if name in note_name_map]
@@ -61,6 +73,7 @@ def main() -> None:
         f"- 已完成局部笔记：{len(completed)}",
         f"- 未完成：{len(missing)}",
         f"- 可能需要复查：{len(review)}",
+        f"- 计划内 arc-note：{len(completed_arc_notes)}/{len(planned_arc_notes)}",
         "",
         "## 已完成",
     ]
@@ -79,6 +92,12 @@ def main() -> None:
     lines.extend(["", "## 可能需要复查"])
     if review:
         lines.extend(review)
+    else:
+        lines.append("- 暂无")
+
+    lines.extend(["", "## 未完成的 arc-note 汇总"])
+    if missing_arc_notes:
+        lines.extend(f"- {path.relative_to(ROOT)}" for path in missing_arc_notes)
     else:
         lines.append("- 暂无")
 

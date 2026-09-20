@@ -29,9 +29,6 @@ outputs/*
 outputs/SillyTavern角色汇总/*
 !outputs/SillyTavern角色汇总/.gitkeep
 
-!outputs/star-forge-import/
-outputs/star-forge-import/*
-!outputs/star-forge-import/.gitkeep
 
 # Common ebook and document source formats
 *.epub

@@ -96,51 +96,40 @@
 | `focus-folk-religion` | 民俗/宗教/禁忌 |
 | `focus-mystery` | 悬疑伏笔 |
 | `focus-style` | 文风分析 |
-| `focus-st-worldbook` | SillyTavern 世界书 |
-| `focus-st-characters` | SillyTavern 角色汇总 |
+
+分析重点不再包含 SillyTavern 世界书 / 角色汇总。这两个只出现在输出目标。
 
 错误容器：`error-analysis-focus`（`data-error-for="analysisFocus"`）。
 
 ## 6. 输出目标
 
-均为 `<select>`，选项只能是 `是` / `否`。
+均为 `<select>`，选项只能是 `是` / `否`。输出目标与分析重点相互独立，不得通过 `data-sync-focus` 或脚本勾选分析重点。
 
-| id | name | data-field | data-sync-focus | 默认 |
-| --- | --- | --- | --- | --- |
-| `output-worldbook` | `outputs.worldbook` | `outputs.worldbook` | SillyTavern 世界书 | 是 |
-| `output-character-summary` | `outputs.characterSummary` | `outputs.characterSummary` | SillyTavern 角色汇总 | 是 |
-| `output-outline` | `outputs.outline` | `outputs.outline` | 剧情大纲 | 否 |
-| `output-timeline` | `outputs.timeline` | `outputs.timeline` | 时间线 | 否 |
-| `output-relations` | `outputs.relations` | `outputs.relations` | 角色关系网 | 否 |
-| `output-style` | `outputs.style` | `outputs.style` | 文风分析 | 否 |
+| id | name | data-field | 默认 |
+| --- | --- | --- | --- |
+| `output-worldbook` | `outputs.worldbook` | `outputs.worldbook` | 是 |
+| `output-character-summary` | `outputs.characterSummary` | `outputs.characterSummary` | 是 |
+| `output-outline` | `outputs.outline` | `outputs.outline` | 否 |
+| `output-timeline` | `outputs.timeline` | `outputs.timeline` | 否 |
+| `output-style` | `outputs.style` | `outputs.style` | 否 |
 
 错误容器：`error-output-worldbook` 等，`data-error-for` 与对应 `data-field` 相同。
 
-同步规则由控制器执行：选项改为 `是` 时勾选对应分析重点；改为 `否` 时不得取消用户已勾选的重点。
+非阻塞提醒：`output-empty-hint`。全部输出为「否」时移除 `hidden`，文案为「未选择最终输出，Agent 将只完成基础整理。」不得把它当成校验错误。
 
-## 7. 目标角色列表
+## 7. 目标角色批量输入
 
-| 分组 | 列表容器 | 增加按钮 | 组错误容器 | data-role-group |
+三类角色各一个 `<textarea>`，不再使用逐行增删排序组件。
+
+| 分组 | id | name | data-field | 错误容器 |
 | --- | --- | --- | --- | --- |
-| 需要深度分析的主要角色 | `list-deep-roles` | `btn-add-deep-role` | `error-deep-roles` | `deep` |
-| 只需简要记录的角色 | `list-brief-roles` | `btn-add-brief-role` | `error-brief-roles` | `brief` |
-| 暂不分析/忽略的角色 | `list-ignored-roles` | `btn-add-ignored-role` | `error-ignored-roles` | `ignored` |
+| 需要深度分析的主要角色 | `field-deep-roles` | `deepRoles` | `deepRoles` | `error-deep-roles` |
+| 只需简要记录的角色 | `field-brief-roles` | `briefRoles` | `briefRoles` | `error-brief-roles` |
+| 暂不分析/忽略的角色 | `field-ignored-roles` | `ignoredRoles` | `ignoredRoles` | `error-ignored-roles` |
 
-增加按钮使用 `data-role-add="<group>"`。
+跨组冲突时给涉及的 textarea 设置 `data-conflict="true"` 和 `aria-invalid="true"`，并写入对应 `data-error-for` 容器。
 
-列表项必须从 `#tpl-role-item` 克隆，结构冻结为：
-
-```html
-<li data-role-item>
-  <input type="text" data-role-name autocomplete="off">
-  <button type="button" data-role-action="up">上移</button>
-  <button type="button" data-role-action="down">下移</button>
-  <button type="button" data-role-action="remove">删除</button>
-  <p data-role-error hidden></p>
-</li>
-```
-
-控制器会给冲突项设置 `data-conflict="true"`，并向 `data-role-error` 写入文本。
+已删除且不得恢复：`list-*-roles`、`btn-add-*-role`、`tpl-role-item`、`data-role-item`、`data-role-name`、`data-role-group`、`data-role-add`、`data-role-action`。
 
 ## 8. 特别注意
 
@@ -265,8 +254,7 @@
 - `btn-select-files` / `btn-select-folder` `click`：打开对应隐藏 input
 - `input-select-files` / `input-select-folder` `change`：累积待导入清单
 - `btn-clear-imports` `click`
-- 角色/特别注意的 `click`（`data-role-action` / `data-role-add` / `data-note-action`）
-- 输出目标 `change`：同步分析重点
+- 特别注意的 `click`（`data-note-action`）
 - `btn-confirm-replace` / `btn-cancel-replace` `click`
 - `btn-copy-preview` `click`
 
