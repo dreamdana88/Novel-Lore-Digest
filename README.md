@@ -4,10 +4,9 @@ Novel-Lore-Digest 是一个可复用的长篇小说设定分析工作流框架�
 
 ## 三分钟开始
 
-1. 填写 `PROJECT_CONFIG.md`：作品类型、分析重点、目标角色和输出目标。
-2. 把小说 `.txt` 或 `.md` 放进 `source_raw/`；该目录是只读原文备份。
-3. 对 agent 说：`启动 Novel Lore Digest`。
-4. 此后按提示说：`继续下一步`。中断后也使用同一句，脚本会从 `workspace/index/下一步.md` 恢复导航。
+1. 填写 `启动-novel-lore-digest.html`：作品类型、分析重点、目标角色和输出目标、上传小说原文。
+2. 对 agent 说：`启动 Novel Lore Digest`。
+3. 此后按提示说：`继续下一步`。中断后也使用同一句，脚本会从 `workspace/index/下一步.md` 恢复导航。
 
 最终可导入 SillyTavern 的作品卡位于：
 
@@ -17,16 +16,15 @@ outputs/sillytavern-story-card/{作品名}.json
 
 ## 工作流主要阶段
 
-1. 第一步：填写 `PROJECT_CONFIG.md`，包括作品名、作品结构类型、分析重点、目标角色和输出目标。
-2. 第二步：把小说原文放进 `source_raw/`。这个目录是原始备份，不要改写。
-3. 第三步：运行 `python scripts/prepare_sources.py`，将原文清洗并拆分到 `workspace/source/`，同时生成 `workspace/index/文本索引.md`。
-4. 第四步：使用 `prompts/02_判断结构与分类.md` 生成 `workspace/index/分析计划.md`。
-5. 第五步：使用 `prompts/03_生成局部笔记.md`，逐篇、逐章或逐块生成局部笔记。
-6. 第六步：使用 `prompts/04_角色出场统计.md` 到 `prompts/07_剧情大纲与时间线.md` 完成角色、世界观、剧情和时间线归并。
-7. 第七步：使用 `prompts/08_输出SillyTavern世界书.md` 输出世界、势力、地点、剧情等世界书条目。
-8. 第八步：使用 `prompts/09_输出SillyTavern角色汇总.md` 输出角色汇总。
-9. 第九步：使用 `prompts/10_归并角色卡.md` 归并角色汇总，便于核查。
-10. 第十步：使用 `prompts/11_导出SillyTavern作品角色卡.md` 导出一张以作品名命名的 SillyTavern 作品角色卡 JSON，所有内容写入内嵌 `character_book`。
+1. 第一步：填写 `启动-novel-lore-digest.html`，包括作品名、作品结构类型、分析重点、目标角色和输出目标。
+2. 第而步：运行 `python scripts/prepare_sources.py`，将原文清洗并拆分到 `workspace/source/`，同时生成 `workspace/index/文本索引.md`。
+3. 第三步：使用 `prompts/02_判断结构与分类.md` 生成 `workspace/index/分析计划.md`。
+4. 第四步：使用 `prompts/03_生成局部笔记.md`，逐篇、逐章或逐块生成局部笔记。
+5. 第五步：使用 `prompts/04_角色出场统计.md` 到 `prompts/07_剧情大纲与时间线.md` 完成角色、世界观、剧情和时间线归并。
+6. 第六步：使用 `prompts/08_输出SillyTavern世界书.md` 输出世界、势力、地点、剧情等世界书条目。
+7. 第七步：使用 `prompts/09_输出SillyTavern角色汇总.md` 输出角色汇总。
+8. 第八步：使用 `prompts/10_归并角色卡.md` 归并角色汇总，便于核查。
+9. 第九步：使用 `prompts/11_导出SillyTavern作品角色卡.md` 导出一张以作品名命名的 SillyTavern 作品角色卡 JSON，所有内容写入内嵌 `character_book`。
 
 详细阶段、输入输出和脚本职责以 [references/workflow.md](references/workflow.md) 为唯一事实来源。
 
@@ -61,10 +59,6 @@ source_raw/ → workspace/ → outputs/
 - 单篇特例不要直接写成全局世界观规则。
 - 不要把 `source_raw/`、`workspace/`、`outputs/` 中的实际内容提交到公开仓库。这些目录可能包含小说原文、拆分文本、大量原文摘录或版权相关整理内容。
 
-## 复用方式
-
-分析不同作品时，通常只需要修改 `PROJECT_CONFIG.md`，再替换 `source_raw/` 中的原文，不需要重写整个工作流。
-
 ## 恢复为空白模板
 
 运行 `python scripts/reset_to_template.py` 会不可恢复地删除 `source_raw/` 中的原文、`workspace/` 中的中间数据和 `outputs/` 中的最终输出，并把 `PROJECT_CONFIG.md` 恢复为空白模板。执行前请备份所有需要保留的原文和结果。
@@ -92,21 +86,6 @@ source_raw/ → workspace/ → outputs/
 归并角色卡
 同步到酒馆
 ```
-
-推荐新项目流程：
-
-1. 填写 `PROJECT_CONFIG.md`。
-2. 把小说 txt/md 放进 `source_raw/`。
-3. 对 Codex/Claude 说：`启动 Novel Lore Digest`。
-4. 之后按提示说：`继续下一步`。
-
-也可以运行：
-
-```powershell
-python scripts/next_step.py
-```
-
-脚本会检查当前状态，并把下一步建议写到 `workspace/index/下一步.md`。
 
 ## SillyTavern 最终导出
 
